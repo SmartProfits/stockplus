@@ -391,7 +391,7 @@
                 <th>Location</th>
                 <th class="hide-on-mobile">Modified Time</th>
                 <th class="hide-on-mobile">Modified By</th>
-                <th>Action</th>
+                <!-- Removed Action Column -->
               </tr>
             </thead>
             <tbody>
@@ -661,66 +661,46 @@
 
             tr.innerHTML = `
               <td>${item.name}</td>
-              <td>${item.quantity}</td>
+              <td class="clickable-quantity" data-item-id="${item.id}">${item.quantity}</td>
               <td>${item.unit}</td>
               <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
               <td>${item.location}</td>
               <td class="hide-on-mobile">${item.modifiedTime}</td>
               <td class="hide-on-mobile">${item.modifiedBy}</td>
-              <td>
-                <button title="Edit"><i class="fas fa-edit"></i></button>
-                <button title="Delete"><i class="fas fa-trash-alt"></i></button>
-              </td>
+              <!-- Removed Action Column -->
             `;
-            // Add event listeners to buttons
-            tr.querySelector('button[title="Edit"]').addEventListener('click', () => {
+            inventoryTableBody.appendChild(tr);
+            
+            // Add click event listener to the quantity cell
+            tr.querySelector('.clickable-quantity').addEventListener('click', () => {
               openEditModal(item.id, item.name, item.quantity, item.unit, item.expiredDate, item.location);
             });
-            tr.querySelector('button[title="Delete"]').addEventListener('click', () => {
-              deleteItem(userId, item.id);
-            });
-            inventoryTableBody.appendChild(tr);
             
             // Populate Cards
             const card = document.createElement('div');
             card.classList.add('inventory-card');
             card.innerHTML = `
               <h4>${item.name}</h4>
-              <p><strong>Quantity:</strong> ${item.quantity}</p>
+              <p><strong>Quantity:</strong> <span class="clickable-quantity" data-item-id="${item.id}">${item.quantity}</span></p>
               <p><strong>Unit:</strong> ${item.unit}</p>
               <p><strong>Expired Date:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
               <p><strong>Location:</strong> ${item.location}</p>
               <p><strong>Modified Time:</strong> ${item.modifiedTime}</p>
               <p><strong>Modified By:</strong> ${item.modifiedBy}</p>
-              <div class="card-actions">
-                <button title="Edit"><i class="fas fa-edit"></i></button>
-                <button title="Delete"><i class="fas fa-trash-alt"></i></button>
-              </div>
+              <!-- Removed Action Buttons -->
             `;
-            // Add event listeners to buttons
-            card.querySelector('button[title="Edit"]').addEventListener('click', () => {
+            inventoryCardsContainer.appendChild(card);
+
+            // Add click event listener to the quantity span in cards
+            card.querySelector('.clickable-quantity').addEventListener('click', () => {
               openEditModal(item.id, item.name, item.quantity, item.unit, item.expiredDate, item.location);
             });
-            card.querySelector('button[title="Delete"]').addEventListener('click', () => {
-              deleteItem(userId, item.id);
-            });
-            inventoryCardsContainer.appendChild(card);
           });
           inventoryMessage.textContent = '';
         } else {
           inventoryMessage.textContent = 'No inventory data available';
         }
       });
-    }
-
-    // Delete Item Function
-    function deleteItem(userId, itemId) {
-      if (confirm('Are you sure you want to delete this item?')) {
-        db.ref(`inventory/${userId}/${itemId}`).remove()
-          .catch((error) => {
-            alert('Failed to delete item: ' + error.message);
-          });
-      }
     }
 
     // Open Edit Modal
