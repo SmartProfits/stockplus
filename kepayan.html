@@ -8,7 +8,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pICvZonb6pj+/U6h8S86YtDj2OmyH9DlK6tm+VQf+U4km/DomZ+ZSSMwL8vqbsOYb7jz0VJo4zQ9ejO9L6LQDw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -28,7 +27,7 @@
 
     #auth-container, #app-container {
       width: 90%;
-      max-width: 600px;
+      max-width: 800px;
       padding: 2rem;
       background-color: #ffffff;
       border-radius: 10px;
@@ -40,6 +39,33 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2rem;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-menu li a {
+      text-decoration: none;
+      color: #1976d2;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border: 1px solid #1976d2;
+      border-radius: 6px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .nav-menu li a:hover {
+      background-color: #1976d2;
+      color: white;
     }
 
     h2, h3 {
@@ -149,7 +175,7 @@
       transform: translateY(-2px);
     }
 
-    #add-item-section, #inventory-list-section {
+    #add-item-section, #inventory-list-section, #stock-in-section, #stock-out-section {
       margin-top: 2rem;
     }
 
@@ -166,18 +192,6 @@
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    /* 库存卡片操作 */
-    .inventory-card .card-actions {
-      margin-top: 0.625rem;
-    }
-
-    .inventory-card .card-actions button {
-      width: auto;
-      padding: 0.5rem 0.75rem;
-      margin-right: 0.3125rem;
-      font-size: 0.875rem;
     }
 
     /* 响应式设计 */
@@ -407,29 +421,16 @@
       <h2>仓库管理系统</h2>
       <button id="logout-button">退出登录</button>
     </header>
+    
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="#" id="nav-inventory">库存列表</a></li>
+        <li><a href="#" id="nav-stock-in">进货</a></li>
+        <li><a href="#" id="nav-stock-out">出货</a></li>
+      </ul>
+    </nav>
+    
     <main>
-      <!-- 添加库存项部分 -->
-      <section id="add-item-section">
-        <h3>添加新库存项</h3>
-        <label for="item-name">产品名称</label>
-        <input type="text" id="item-name" placeholder="Product Name" required>
-        
-        <label for="item-quantity">数量</label>
-        <input type="number" id="item-quantity" placeholder="Quantity" required>
-        
-        <label for="item-unit">单位</label>
-        <input type="text" id="item-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
-        
-        <label for="item-expired-date">过期日期 (可选)</label>
-        <input type="date" id="item-expired-date" placeholder="Expired Date (Optional)">
-        
-        <label for="item-location">位置</label>
-        <input type="text" id="item-location" placeholder="Location" required>
-        
-        <button id="add-item-button">添加</button>
-        <p id="add-item-error" class="error-message"></p>
-      </section>
-      
       <!-- 库存列表部分 -->
       <section id="inventory-list-section">
         <h3>库存列表</h3>
@@ -457,6 +458,44 @@
           <!-- 库存项卡片将动态填充 -->
         </div>
         <p id="inventory-message"></p>
+      </section>
+      
+      <!-- 进货部分 -->
+      <section id="stock-in-section" style="display: none;">
+        <h3>进货</h3>
+        <label for="stock-in-name">产品名称</label>
+        <input type="text" id="stock-in-name" placeholder="Product Name" required>
+        
+        <label for="stock-in-quantity">数量</label>
+        <input type="number" id="stock-in-quantity" placeholder="Quantity" required>
+        
+        <label for="stock-in-unit">单位</label>
+        <input type="text" id="stock-in-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
+        
+        <label for="stock-in-expired-date">过期日期 (可选)</label>
+        <input type="date" id="stock-in-expired-date" placeholder="Expired Date (Optional)">
+        
+        <label for="stock-in-location">位置</label>
+        <input type="text" id="stock-in-location" placeholder="Location" required>
+        
+        <button id="stock-in-button">添加进货</button>
+        <p id="stock-in-error" class="error-message"></p>
+      </section>
+      
+      <!-- 出货部分 -->
+      <section id="stock-out-section" style="display: none;">
+        <h3>出货</h3>
+        <label for="stock-out-name">产品名称</label>
+        <input type="text" id="stock-out-name" placeholder="Product Name" required>
+        
+        <label for="stock-out-quantity">数量</label>
+        <input type="number" id="stock-out-quantity" placeholder="Quantity" required>
+        
+        <label for="stock-out-location">位置</label>
+        <input type="text" id="stock-out-location" placeholder="Location" required>
+        
+        <button id="stock-out-button">添加出货</button>
+        <p id="stock-out-error" class="error-message"></p>
       </section>
     </main>
   </div>
@@ -504,7 +543,6 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
-    const analytics = firebase.analytics();
 
     // 获取页面元素
     const authContainer = document.getElementById('auth-container');
@@ -519,18 +557,33 @@
 
     const appContainer = document.getElementById('app-container');
     const logoutButton = document.getElementById('logout-button');
-    const addItemButton = document.getElementById('add-item-button');
-    const itemNameInput = document.getElementById('item-name');
-    const itemQuantityInput = document.getElementById('item-quantity');
-    const itemUnitInput = document.getElementById('item-unit');
-    const itemExpiredDateInput = document.getElementById('item-expired-date');
-    const itemLocationInput = document.getElementById('item-location');
-    const addItemError = document.getElementById('add-item-error');
+    const navInventory = document.getElementById('nav-inventory');
+    const navStockIn = document.getElementById('nav-stock-in');
+    const navStockOut = document.getElementById('nav-stock-out');
+
+    const inventoryListSection = document.getElementById('inventory-list-section');
+    const stockInSection = document.getElementById('stock-in-section');
+    const stockOutSection = document.getElementById('stock-out-section');
+
+    const stockInButton = document.getElementById('stock-in-button');
+    const stockOutButton = document.getElementById('stock-out-button');
+
+    const stockInNameInput = document.getElementById('stock-in-name');
+    const stockInQuantityInput = document.getElementById('stock-in-quantity');
+    const stockInUnitInput = document.getElementById('stock-in-unit');
+    const stockInExpiredDateInput = document.getElementById('stock-in-expired-date');
+    const stockInLocationInput = document.getElementById('stock-in-location');
+    const stockInError = document.getElementById('stock-in-error');
+
+    const stockOutNameInput = document.getElementById('stock-out-name');
+    const stockOutQuantityInput = document.getElementById('stock-out-quantity');
+    const stockOutLocationInput = document.getElementById('stock-out-location');
+    const stockOutError = document.getElementById('stock-out-error');
+
     const inventoryTableBody = document.querySelector('#inventory-table tbody');
     const inventoryMessage = document.getElementById('inventory-message');
     const inventoryCardsContainer = document.getElementById('inventory-cards');
 
-    // 编辑模态框元素
     const editModal = document.getElementById('edit-modal');
     const closeModalSpan = document.querySelector('.close');
     const editItemNameInput = document.getElementById('edit-item-name');
@@ -581,12 +634,13 @@
           });
         })
         .then(() => {
-          // 可选：将用户信息保存到数据库
+          // 将用户信息保存到数据库，并设置默认角色为“user”
           const user = auth.currentUser;
           if (user) {
             db.ref('users/' + user.uid).set({
               name: user.displayName,
-              email: user.email
+              email: user.email,
+              role: 'user' // 默认角色
             });
           }
           registerError.textContent = '';
@@ -672,23 +726,23 @@
       }
     });
 
-    // 添加库存项
-    addItemButton.addEventListener('click', () => {
-      const name = itemNameInput.value.trim();
-      const quantity = itemQuantityInput.value.trim();
-      const unit = itemUnitInput.value.trim();
-      const expiredDate = itemExpiredDateInput.value; // 可选
-      const location = itemLocationInput.value.trim();
+    // 添加进货功能
+    stockInButton.addEventListener('click', () => {
+      const name = stockInNameInput.value.trim();
+      const quantity = stockInQuantityInput.value.trim();
+      const unit = stockInUnitInput.value.trim();
+      const expiredDate = stockInExpiredDateInput.value; // 可选
+      const location = stockInLocationInput.value.trim();
 
       // 基本验证
       if (name === '' || quantity === '' || unit === '' || location === '') {
-        addItemError.textContent = '请填写所有必填字段';
+        stockInError.textContent = '请填写所有必填字段';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        addItemError.textContent = '用户未认证';
+        stockInError.textContent = '用户未认证';
         return;
       }
 
@@ -714,17 +768,93 @@
       const newItemRef = inventoryRef.push();
       newItemRef.set(itemData, (error) => {
         if (error) {
-          addItemError.textContent = '添加库存项失败: ' + error.message;
+          stockInError.textContent = '添加进货项失败: ' + error.message;
         } else {
-          addItemError.textContent = '';
-          itemNameInput.value = '';
-          itemQuantityInput.value = '';
-          itemUnitInput.value = '';
-          itemExpiredDateInput.value = '';
-          itemLocationInput.value = '';
+          stockInError.textContent = '';
+          stockInNameInput.value = '';
+          stockInQuantityInput.value = '';
+          stockInUnitInput.value = '';
+          stockInExpiredDateInput.value = '';
+          stockInLocationInput.value = '';
         }
         hideLoading();
       });
+    });
+
+    // 添加出货功能
+    stockOutButton.addEventListener('click', () => {
+      const name = stockOutNameInput.value.trim();
+      const quantity = stockOutQuantityInput.value.trim();
+      const location = stockOutLocationInput.value.trim();
+
+      // 基本验证
+      if (name === '' || quantity === '' || location === '') {
+        stockOutError.textContent = '请填写所有必填字段';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        stockOutError.textContent = '用户未认证';
+        return;
+      }
+
+      showLoading();
+
+      // 查找对应的库存项
+      const inventoryRef = db.ref('inventory/' + user.uid);
+      inventoryRef.orderByChild('name').equalTo(name).once('value')
+        .then((snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const updates = {};
+            let found = false;
+
+            // 优先减少库存数量最早添加的项
+            const sortedKeys = Object.keys(data).sort((a, b) => {
+              return new Date(data[a].createdTime) - new Date(data[b].createdTime);
+            });
+
+            for (const key of sortedKeys) {
+              const item = data[key];
+              if (item.quantity >= Number(quantity)) {
+                updates[`/${key}/quantity`] = item.quantity - Number(quantity);
+                updates[`/${key}/modifiedTime`] = new Date().toLocaleString();
+                updates[`/${key}/modifiedBy`] = user.displayName || '未知';
+                found = true;
+                break;
+              } else if (item.quantity > 0) {
+                updates[`/${key}/quantity`] = 0;
+                updates[`/${key}/modifiedTime`] = new Date().toLocaleString();
+                updates[`/${key}/modifiedBy`] = user.displayName || '未知';
+                // Reduce the remaining quantity
+                const remaining = Number(quantity) - item.quantity;
+                quantity = remaining;
+              }
+            }
+
+            if (found || quantity > 0) {
+              return inventoryRef.update(updates);
+            } else {
+              throw new Error('库存不足或未找到对应的产品');
+            }
+          } else {
+            throw new Error('未找到对应的产品');
+          }
+        })
+        .then(() => {
+          stockOutError.textContent = '';
+          stockOutNameInput.value = '';
+          stockOutQuantityInput.value = '';
+          stockOutLocationInput.value = '';
+        })
+        .catch((error) => {
+          console.error('出货错误:', error);
+          stockOutError.textContent = '出货失败: ' + error.message;
+        })
+        .finally(() => {
+          hideLoading();
+        });
     });
 
     // 加载库存列表
@@ -875,11 +1005,42 @@
       }
     });
 
-    // 简单的邮箱验证函数
-    function validateEmail(email) {
-      const re = /\S+@\S+\.\S+/;
-      return re.test(email);
+    // 显示指定的页面部分，并隐藏其他部分
+    function showSection(section) {
+      inventoryListSection.style.display = 'none';
+      stockInSection.style.display = 'none';
+      stockOutSection.style.display = 'none';
+      
+      switch(section) {
+        case 'inventory':
+          inventoryListSection.style.display = 'block';
+          break;
+        case 'stock-in':
+          stockInSection.style.display = 'block';
+          break;
+        case 'stock-out':
+          stockOutSection.style.display = 'block';
+          break;
+        default:
+          inventoryListSection.style.display = 'block';
+      }
     }
+
+    // 添加导航链接的事件处理
+    navInventory.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('inventory');
+    });
+
+    navStockIn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('stock-in');
+    });
+
+    navStockOut.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('stock-out');
+    });
 
     // 显示加载指示器
     function showLoading() {
@@ -890,6 +1051,77 @@
     function hideLoading() {
       loadingIndicator.style.display = 'none';
     }
+
+    // 出货功能优化
+    stockOutButton.addEventListener('click', () => {
+      let name = stockOutNameInput.value.trim();
+      let quantity = parseInt(stockOutQuantityInput.value.trim(), 10);
+      const location = stockOutLocationInput.value.trim();
+
+      // 基本验证
+      if (name === '' || isNaN(quantity) || quantity <= 0 || location === '') {
+        stockOutError.textContent = '请填写所有必填字段，且数量必须大于0';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        stockOutError.textContent = '用户未认证';
+        return;
+      }
+
+      showLoading();
+
+      const inventoryRef = db.ref('inventory/' + user.uid);
+      inventoryRef.orderByChild('name').equalTo(name).once('value')
+        .then((snapshot) => {
+          const data = snapshot.val();
+          if (!data) {
+            throw new Error('未找到对应的产品');
+          }
+
+          const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+          // 按照创建时间排序，最早的先处理
+          items.sort((a, b) => new Date(a.createdTime) - new Date(b.createdTime));
+
+          let updates = {};
+          let remaining = quantity;
+
+          for (let item of items) {
+            if (remaining <= 0) break;
+            if (item.quantity >= remaining) {
+              updates[`/${item.id}/quantity`] = item.quantity - remaining;
+              updates[`/${item.id}/modifiedTime`] = new Date().toLocaleString();
+              updates[`/${item.id}/modifiedBy`] = user.displayName || '未知';
+              remaining = 0;
+            } else if (item.quantity > 0) {
+              updates[`/${item.id}/quantity`] = 0;
+              updates[`/${item.id}/modifiedTime`] = new Date().toLocaleString();
+              updates[`/${item.id}/modifiedBy`] = user.displayName || '未知';
+              remaining -= item.quantity;
+            }
+          }
+
+          if (remaining > 0) {
+            throw new Error('库存不足');
+          }
+
+          return inventoryRef.update(updates);
+        })
+        .then(() => {
+          stockOutError.textContent = '';
+          stockOutNameInput.value = '';
+          stockOutQuantityInput.value = '';
+          stockOutLocationInput.value = '';
+        })
+        .catch((error) => {
+          console.error('出货错误:', error);
+          stockOutError.textContent = '出货失败: ' + error.message;
+        })
+        .finally(() => {
+          hideLoading();
+        });
+    });
   </script>
 </body>
 </html>
