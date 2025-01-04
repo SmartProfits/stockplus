@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>Warehouse Management System</title>
-  <!-- Include Firebase SDK -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>仓库管理系统</title>
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
   
-  <!-- Include Font Awesome for Icons (Optional) -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pICvZonb6pj+/U6h8S86YtDj2OmyH9DlK6tm+VQf+U4km/DomZ+ZSSMwL8vqbsOYb7jz0VJo4zQ9ejO9L6LQDw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
   <style>
-    /* Optimized CSS for better UI and responsiveness */
+    /* 基本样式 */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #eef2f5;
@@ -28,7 +29,7 @@
     #auth-container, #app-container {
       width: 90%;
       max-width: 600px;
-      padding: 30px;
+      padding: 2rem;
       background-color: #ffffff;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -38,7 +39,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 2rem;
     }
 
     h2, h3 {
@@ -46,14 +47,21 @@
       margin: 0;
     }
 
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
     input {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      padding: 0.75rem;
+      margin: 0.625rem 0;
       border: 1px solid #cccccc;
       border-radius: 6px;
       box-sizing: border-box;
       transition: border-color 0.3s;
+      font-size: 1rem;
     }
 
     input:focus {
@@ -64,14 +72,15 @@
 
     button {
       width: 100%;
-      padding: 12px;
+      padding: 0.75rem;
       background-color: #1976d2;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 1rem;
       transition: background-color 0.3s, transform 0.2s;
+      margin-top: 1rem;
     }
 
     button:hover {
@@ -81,27 +90,29 @@
 
     .error-message {
       color: #d32f2f;
-      margin-top: 5px;
-      font-size: 14px;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
     }
 
-    /* Responsive Table Container */
+    /* 响应式表格容器 */
     .table-responsive {
       width: 100%;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 1rem;
     }
 
     th, td {
-      padding: 14px;
+      padding: 0.875rem;
       border: 1px solid #dddddd;
       text-align: left;
       word-wrap: break-word;
+      font-size: 0.875rem;
     }
 
     th {
@@ -125,11 +136,12 @@
 
     #logout-button {
       width: auto;
-      padding: 8px 16px;
+      padding: 0.5rem 1rem;
       background-color: #d32f2f;
       margin: 0;
       border-radius: 6px;
       transition: background-color 0.3s, transform 0.2s;
+      font-size: 0.875rem;
     }
 
     #logout-button:hover {
@@ -138,70 +150,68 @@
     }
 
     #add-item-section, #inventory-list-section {
-      margin-top: 20px;
+      margin-top: 2rem;
     }
 
-    /* Inventory Cards Container */
+    /* 库存卡片容器 */
     .cards-container {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 1rem;
     }
 
-    /* Individual Inventory Card */
+    /* 单个库存卡片 */
     .inventory-card {
       background-color: #f9f9f9;
-      padding: 15px;
+      padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
-    /* Inventory Card Actions */
+    /* 库存卡片操作 */
     .inventory-card .card-actions {
-      margin-top: 10px;
+      margin-top: 0.625rem;
     }
 
     .inventory-card .card-actions button {
       width: auto;
-      padding: 8px 12px;
-      margin-right: 5px;
-      font-size: 14px;
+      padding: 0.5rem 0.75rem;
+      margin-right: 0.3125rem;
+      font-size: 0.875rem;
     }
 
-    /* Responsive Design */
+    /* 响应式设计 */
     @media (max-width: 600px) {
       #auth-container, #app-container {
-        padding: 20px;
+        padding: 1.5rem;
       }
 
       th, td {
-        padding: 10px;
+        padding: 0.625rem;
       }
 
       button {
-        font-size: 14px;
+        font-size: 0.875rem;
       }
 
       #logout-button {
-        padding: 6px 12px;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
       }
 
-      .modal-content {
-        margin: 20% auto;
-      }
-
-      /* Hide table and show cards on small screens */
-      #inventory-table {
+      /* 隐藏部分列在小屏幕 */
+      #inventory-table th:nth-child(4),
+      #inventory-table th:nth-child(6),
+      #inventory-table th:nth-child(7),
+      #inventory-table td:nth-child(4),
+      #inventory-table td:nth-child(6),
+      #inventory-table td:nth-child(7) {
         display: none;
-      }
-
-      #inventory-cards {
-        display: block;
       }
     }
 
     @media (min-width: 601px) {
-      /* Show table and hide cards on larger screens */
+      /* 大屏幕显示表格，隐藏卡片 */
       #inventory-table {
         display: table;
       }
@@ -211,7 +221,7 @@
       }
     }
 
-    /* Modal Styles */
+    /* 模态框样式 */
     .modal {
       display: none; 
       position: fixed; 
@@ -222,12 +232,13 @@
       height: 100%; 
       overflow: auto; 
       background-color: rgba(0,0,0,0.4); 
+      -webkit-overflow-scrolling: touch;
     }
 
     .modal-content {
       background-color: #fefefe;
       margin: 10% auto; 
-      padding: 20px;
+      padding: 1.25rem;
       border: 1px solid #888;
       width: 90%; 
       max-width: 500px;
@@ -237,7 +248,7 @@
     .close {
       color: #aaa;
       float: right;
-      font-size: 28px;
+      font-size: 1.75rem;
       font-weight: bold;
       cursor: pointer;
     }
@@ -248,29 +259,31 @@
       text-decoration: none;
     }
 
-    /* Checkbox Styling */
+    /* 复选框样式 */
     .checkbox-container {
       display: flex;
       align-items: center;
-      margin: 10px 0;
+      margin: 0.625rem 0;
     }
 
     .checkbox-container input {
       width: auto;
-      margin-right: 10px;
+      margin-right: 0.625rem;
     }
 
-    /* Inventory Card Styles */
+    /* 库存卡片样式 */
     .inventory-card h4 {
-      margin: 0 0 10px 0;
+      margin: 0 0 0.625rem 0;
       color: #1976d2;
+      font-size: 1.25rem;
     }
 
     .inventory-card p {
-      margin: 5px 0;
-      font-size: 14px;
+      margin: 0.3125rem 0;
+      font-size: 0.875rem;
     }
 
+    /* 库存卡片按钮样式 */
     .inventory-card .card-actions button {
       background-color: #1976d2;
       color: white;
@@ -285,12 +298,12 @@
       transform: translateY(-2px);
     }
 
-    /* Optional: Adjust table and card button icons */
+    /* 按钮图标样式 */
     button i {
       pointer-events: none;
     }
 
-    /* Optional: Add tooltips for icon buttons */
+    /* 工具提示样式 */
     button[title] {
       position: relative;
     }
@@ -298,15 +311,15 @@
     button[title]:hover::after {
       content: attr(title);
       position: absolute;
-      bottom: 125%; /* Position above the button */
+      bottom: 125%; 
       left: 50%;
       transform: translateX(-50%);
       background-color: #333;
       color: #fff;
-      padding: 5px 8px;
+      padding: 0.3125rem 0.5rem;
       border-radius: 4px;
       white-space: nowrap;
-      font-size: 12px;
+      font-size: 0.75rem;
       opacity: 1;
       visibility: visible;
     }
@@ -324,108 +337,158 @@
       visibility: hidden;
       transition: opacity 0.3s;
     }
+
+    /* 加载指示器样式 */
+    #loading-indicator {
+      display: none; 
+      position: fixed; 
+      top: 50%; 
+      left: 50%; 
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      border-radius: 10px;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
-  <!-- User Authentication Container -->
+  <!-- 加载指示器 -->
+  <div id="loading-indicator">
+    <i class="fas fa-spinner fa-spin fa-3x"></i>
+  </div>
+
+  <!-- 用户认证容器 -->
   <div id="auth-container">
-    <h2>Warehouse Management System</h2>
+    <h2>仓库管理系统</h2>
     <div id="auth-forms">
-      <!-- Login Form -->
+      <!-- 登录表单 -->
       <div id="login-form">
-        <h3>Login</h3>
+        <h3>登录</h3>
+        <label for="login-email">邮箱</label>
         <input type="email" id="login-email" placeholder="Email" required>
+        
+        <label for="login-password">密码</label>
         <input type="password" id="login-password" placeholder="Password" required>
-        <!-- Remember Me Checkbox -->
+        
+        <!-- 记住我复选框 -->
         <div class="checkbox-container">
           <input type="checkbox" id="remember-me">
-          <label for="remember-me">Remember Me</label>
+          <label for="remember-me">记住我</label>
         </div>
-        <button id="login-button">Login</button>
-        <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+        
+        <button id="login-button">登录</button>
+        <p>还没有账号？ <a href="#" id="show-register">注册</a></p>
         <p id="login-error" class="error-message"></p>
       </div>
-      <!-- Register Form -->
+      
+      <!-- 注册表单 -->
       <div id="register-form" style="display: none;">
-        <h3>Register</h3>
+        <h3>注册</h3>
+        <label for="register-name">姓名</label>
         <input type="text" id="register-name" placeholder="Name" required>
+        
+        <label for="register-email">邮箱</label>
         <input type="email" id="register-email" placeholder="Email" required>
+        
+        <label for="register-password">密码</label>
         <input type="password" id="register-password" placeholder="Password" required>
-        <button id="register-button">Register</button>
-        <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+        
+        <button id="register-button">注册</button>
+        <p>已有账号？ <a href="#" id="show-login">登录</a></p>
         <p id="register-error" class="error-message"></p>
       </div>
     </div>
   </div>
 
-  <!-- Main Application Container -->
+  <!-- 主应用容器 -->
   <div id="app-container" style="display: none;">
     <header>
-      <h2>Warehouse Management System</h2>
-      <button id="logout-button">Logout</button>
+      <h2>仓库管理系统</h2>
+      <button id="logout-button">退出登录</button>
     </header>
     <main>
-      <!-- Add Inventory Item Section -->
+      <!-- 添加库存项部分 -->
       <section id="add-item-section">
-        <h3>Add New Inventory Item</h3>
+        <h3>添加新库存项</h3>
+        <label for="item-name">产品名称</label>
         <input type="text" id="item-name" placeholder="Product Name" required>
+        
+        <label for="item-quantity">数量</label>
         <input type="number" id="item-quantity" placeholder="Quantity" required>
+        
+        <label for="item-unit">单位</label>
         <input type="text" id="item-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
+        
+        <label for="item-expired-date">过期日期 (可选)</label>
         <input type="date" id="item-expired-date" placeholder="Expired Date (Optional)">
+        
+        <label for="item-location">位置</label>
         <input type="text" id="item-location" placeholder="Location" required>
-        <button id="add-item-button">Add</button>
+        
+        <button id="add-item-button">添加</button>
         <p id="add-item-error" class="error-message"></p>
       </section>
-      <!-- Inventory List Section -->
+      
+      <!-- 库存列表部分 -->
       <section id="inventory-list-section">
-        <h3>Inventory List</h3>
-        <!-- Responsive Table -->
+        <h3>库存列表</h3>
+        <!-- 响应式表格 -->
         <div class="table-responsive">
           <table id="inventory-table">
             <thead>
               <tr>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-                <th class="hide-on-mobile">Expired Date</th>
-                <th>Location</th>
-                <th class="hide-on-mobile">Modified Time</th>
-                <th class="hide-on-mobile">Modified By</th>
-                <!-- Removed Action Column -->
+                <th>产品名称</th>
+                <th>数量</th>
+                <th>单位</th>
+                <th class="hide-on-mobile">过期日期</th>
+                <th>位置</th>
+                <th class="hide-on-mobile">修改时间</th>
+                <th class="hide-on-mobile">修改人</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Inventory items will be dynamically populated -->
+              <!-- 库存项将动态填充 -->
             </tbody>
           </table>
         </div>
-        <!-- Card Layout for Mobile -->
+        <!-- 移动端卡片布局 -->
         <div id="inventory-cards" class="cards-container" style="display: none;">
-          <!-- Inventory items as cards will be dynamically populated -->
+          <!-- 库存项卡片将动态填充 -->
         </div>
         <p id="inventory-message"></p>
       </section>
     </main>
   </div>
 
-  <!-- Edit Inventory Item Modal -->
+  <!-- 编辑库存项模态框 -->
   <div id="edit-modal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h3>Edit Inventory Item</h3>
+      <h3>编辑库存项</h3>
+      
+      <label for="edit-item-name">产品名称</label>
       <input type="text" id="edit-item-name" placeholder="Product Name" required>
+      
+      <label for="edit-item-quantity">数量</label>
       <input type="number" id="edit-item-quantity" placeholder="Quantity" required>
+      
+      <label for="edit-item-unit">单位</label>
       <input type="text" id="edit-item-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
+      
+      <label for="edit-item-expired-date">过期日期 (可选)</label>
       <input type="date" id="edit-item-expired-date" placeholder="Expired Date (Optional)">
+      
+      <label for="edit-item-location">位置</label>
       <input type="text" id="edit-item-location" placeholder="Location" required>
-      <button id="save-edit-button">Save Changes</button>
+      
+      <button id="save-edit-button">保存更改</button>
       <p id="edit-item-error" class="error-message"></p>
     </div>
   </div>
 
-  <!-- Include JavaScript -->
   <script>
-    // Firebase Configuration
+    // Firebase 配置
     const firebaseConfig = {
       apiKey: "AIzaSyDAK5KVv9oln2qS5EfNzox1snM19wa83-o",
       authDomain: "smart-profits-stock.firebaseapp.com",
@@ -437,13 +500,13 @@
       measurementId: "G-R0K4Q7JTGE"
     };
 
-    // Initialize Firebase
+    // 初始化 Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
     const analytics = firebase.analytics();
 
-    // Get page elements
+    // 获取页面元素
     const authContainer = document.getElementById('auth-container');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
@@ -465,8 +528,9 @@
     const addItemError = document.getElementById('add-item-error');
     const inventoryTableBody = document.querySelector('#inventory-table tbody');
     const inventoryMessage = document.getElementById('inventory-message');
+    const inventoryCardsContainer = document.getElementById('inventory-cards');
 
-    // Edit Modal Elements
+    // 编辑模态框元素
     const editModal = document.getElementById('edit-modal');
     const closeModalSpan = document.querySelector('.close');
     const editItemNameInput = document.getElementById('edit-item-name');
@@ -477,23 +541,25 @@
     const saveEditButton = document.getElementById('save-edit-button');
     const editItemError = document.getElementById('edit-item-error');
 
-    let currentEditItemId = null; // Currently editing item ID
+    const loadingIndicator = document.getElementById('loading-indicator');
 
-    // Switch to Register Form
+    let currentEditItemId = null; // 当前编辑的库存项ID
+
+    // 显示/隐藏注册表单
     showRegisterLink.addEventListener('click', (e) => {
       e.preventDefault();
       loginForm.style.display = 'none';
       registerForm.style.display = 'block';
     });
 
-    // Switch to Login Form
+    // 显示/隐藏登录表单
     showLoginLink.addEventListener('click', (e) => {
       e.preventDefault();
       registerForm.style.display = 'none';
       loginForm.style.display = 'block';
     });
 
-    // Register Functionality
+    // 注册功能
     registerButton.addEventListener('click', (e) => {
       e.preventDefault();
       const name = document.getElementById('register-name').value.trim();
@@ -501,19 +567,21 @@
       const password = document.getElementById('register-password').value.trim();
 
       if (name === '' || email === '' || password === '') {
-        registerError.textContent = 'Please fill in all fields';
+        registerError.textContent = '请填写所有字段';
         return;
       }
 
+      showLoading();
+
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          // Registration successful, set display name
+          // 注册成功，设置显示名称
           return userCredential.user.updateProfile({
             displayName: name
           });
         })
         .then(() => {
-          // Optionally save user info to the database
+          // 可选：将用户信息保存到数据库
           const user = auth.currentUser;
           if (user) {
             db.ref('users/' + user.uid).set({
@@ -525,12 +593,15 @@
           registerForm.reset();
         })
         .catch((error) => {
-          console.error('Registration Error:', error);
+          console.error('注册错误:', error);
           registerError.textContent = error.message;
+        })
+        .finally(() => {
+          hideLoading();
         });
     });
 
-    // Login Functionality with "Remember Me"
+    // 登录功能（包含“记住我”）
     loginButton.addEventListener('click', (e) => {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
@@ -538,11 +609,13 @@
       const rememberMe = document.getElementById('remember-me').checked;
 
       if (email === '' || password === '') {
-        loginError.textContent = 'Please fill in all fields';
+        loginError.textContent = '请填写所有字段';
         return;
       }
 
-      // Set persistence based on "Remember Me"
+      showLoading();
+
+      // 根据“记住我”设置持久性
       const persistence = rememberMe
         ? firebase.auth.Auth.Persistence.LOCAL
         : firebase.auth.Auth.Persistence.SESSION;
@@ -552,67 +625,76 @@
           return auth.signInWithEmailAndPassword(email, password);
         })
         .then((userCredential) => {
-          // Login successful
+          // 登录成功
           loginError.textContent = '';
           loginForm.reset();
         })
         .catch((error) => {
-          console.error('Login Error:', error);
+          console.error('登录错误:', error);
           loginError.textContent = error.message;
+        })
+        .finally(() => {
+          hideLoading();
         });
     });
 
-    // Listen for Authentication State Changes
+    // 监听认证状态变化
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // User is logged in, show app interface
+        // 用户已登录，显示主应用界面
         authContainer.style.display = 'none';
         appContainer.style.display = 'block';
         loadInventory(user.uid);
       } else {
-        // User is not logged in, show login/register interface
+        // 用户未登录，显示登录/注册界面
         authContainer.style.display = 'block';
         appContainer.style.display = 'none';
         inventoryTableBody.innerHTML = '';
-        document.getElementById('inventory-cards').innerHTML = '';
+        inventoryCardsContainer.innerHTML = '';
         inventoryMessage.textContent = '';
       }
     });
 
-    // Logout Functionality with Additional Features
+    // 登出功能
     logoutButton.addEventListener('click', () => {
-      if (confirm('Are you sure you want to logout?')) {
+      if (confirm('确定要退出登录吗？')) {
+        showLoading();
         auth.signOut()
           .then(() => {
-            alert('Successfully logged out');
+            alert('成功退出登录');
           })
           .catch((error) => {
-            alert('Logout failed: ' + error.message);
+            alert('退出登录失败: ' + error.message);
+          })
+          .finally(() => {
+            hideLoading();
           });
       }
     });
 
-    // Add Inventory Item
+    // 添加库存项
     addItemButton.addEventListener('click', () => {
       const name = itemNameInput.value.trim();
       const quantity = itemQuantityInput.value.trim();
       const unit = itemUnitInput.value.trim();
-      const expiredDate = itemExpiredDateInput.value; // Optional
+      const expiredDate = itemExpiredDateInput.value; // 可选
       const location = itemLocationInput.value.trim();
 
-      // Basic Validation
+      // 基本验证
       if (name === '' || quantity === '' || unit === '' || location === '') {
-        addItemError.textContent = 'Please fill in all required fields';
+        addItemError.textContent = '请填写所有必填字段';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        addItemError.textContent = 'User not authenticated';
+        addItemError.textContent = '用户未认证';
         return;
       }
 
-      // Prepare Data Object
+      showLoading();
+
+      // 准备数据对象
       const itemData = {
         name,
         quantity: Number(quantity),
@@ -620,10 +702,10 @@
         location,
         createdTime: new Date().toLocaleString(),
         modifiedTime: new Date().toLocaleString(),
-        modifiedBy: user.displayName || 'Unknown'
+        modifiedBy: user.displayName || '未知'
       };
 
-      // Add Expired Date if provided
+      // 如果提供了过期日期，则添加到数据对象
       if (expiredDate) {
         itemData.expiredDate = expiredDate;
       }
@@ -632,7 +714,7 @@
       const newItemRef = inventoryRef.push();
       newItemRef.set(itemData, (error) => {
         if (error) {
-          addItemError.textContent = 'Failed to add item: ' + error.message;
+          addItemError.textContent = '添加库存项失败: ' + error.message;
         } else {
           addItemError.textContent = '';
           itemNameInput.value = '';
@@ -641,69 +723,68 @@
           itemExpiredDateInput.value = '';
           itemLocationInput.value = '';
         }
+        hideLoading();
       });
     });
 
-    // Load Inventory List
+    // 加载库存列表
     function loadInventory(userId) {
       const inventoryRef = db.ref('inventory/' + userId);
       inventoryRef.on('value', (snapshot) => {
         const data = snapshot.val();
         inventoryTableBody.innerHTML = '';
-        const inventoryCardsContainer = document.getElementById('inventory-cards');
         inventoryCardsContainer.innerHTML = '';
         
         if (data) {
           const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
           items.forEach(item => {
-            // Populate Table
-            const tr = document.createElement('tr');
-
-            tr.innerHTML = `
-              <td>${item.name}</td>
-              <td class="clickable-quantity" data-item-id="${item.id}">${item.quantity}</td>
-              <td>${item.unit}</td>
-              <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
-              <td>${item.location}</td>
-              <td class="hide-on-mobile">${item.modifiedTime}</td>
-              <td class="hide-on-mobile">${item.modifiedBy}</td>
-              <!-- Removed Action Column -->
-            `;
+            // 填充表格
+            const tr = createTableRow(item);
             inventoryTableBody.appendChild(tr);
             
-            // Add click event listener to the quantity cell
-            tr.querySelector('.clickable-quantity').addEventListener('click', () => {
-              openEditModal(item.id, item.name, item.quantity, item.unit, item.expiredDate, item.location);
-            });
-            
-            // Populate Cards
-            const card = document.createElement('div');
-            card.classList.add('inventory-card');
-            card.innerHTML = `
-              <h4>${item.name}</h4>
-              <p><strong>Quantity:</strong> <span class="clickable-quantity" data-item-id="${item.id}">${item.quantity}</span></p>
-              <p><strong>Unit:</strong> ${item.unit}</p>
-              <p><strong>Expired Date:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
-              <p><strong>Location:</strong> ${item.location}</p>
-              <p><strong>Modified Time:</strong> ${item.modifiedTime}</p>
-              <p><strong>Modified By:</strong> ${item.modifiedBy}</p>
-              <!-- Removed Action Buttons -->
-            `;
+            // 填充卡片
+            const card = createCard(item);
             inventoryCardsContainer.appendChild(card);
-
-            // Add click event listener to the quantity span in cards
-            card.querySelector('.clickable-quantity').addEventListener('click', () => {
-              openEditModal(item.id, item.name, item.quantity, item.unit, item.expiredDate, item.location);
-            });
           });
           inventoryMessage.textContent = '';
         } else {
-          inventoryMessage.textContent = 'No inventory data available';
+          inventoryMessage.textContent = '暂无库存数据';
         }
       });
     }
 
-    // Open Edit Modal
+    // 创建表格行
+    function createTableRow(item) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${item.name}</td>
+        <td class="clickable-quantity" data-item-id="${item.id}">${item.quantity}</td>
+        <td>${item.unit}</td>
+        <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
+        <td>${item.location}</td>
+        <td class="hide-on-mobile">${item.modifiedTime}</td>
+        <td class="hide-on-mobile">${item.modifiedBy}</td>
+      `;
+      return tr;
+    }
+
+    // 创建卡片
+    function createCard(item) {
+      const card = document.createElement('div');
+      card.classList.add('inventory-card');
+      card.innerHTML = `
+        <h4>${item.name}</h4>
+        <p><strong>数量:</strong> <span class="clickable-quantity" data-item-id="${item.id}">${item.quantity}</span></p>
+        <p><strong>单位:</strong> ${item.unit}</p>
+        <p><strong>过期日期:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
+        <p><strong>位置:</strong> ${item.location}</p>
+        <p><strong>修改时间:</strong> ${item.modifiedTime}</p>
+        <p><strong>修改人:</strong> ${item.modifiedBy}</p>
+      `;
+      return card;
+    }
+
+    // 打开编辑模态框
     function openEditModal(itemId, name, quantity, unit, expiredDate, location) {
       currentEditItemId = itemId;
       editItemNameInput.value = name;
@@ -715,7 +796,7 @@
       editModal.style.display = 'block';
     }
 
-    // Close Edit Modal
+    // 关闭编辑模态框
     closeModalSpan.onclick = function() {
       editModal.style.display = 'none';
     }
@@ -726,53 +807,89 @@
       }
     }
 
-    // Save Edited Inventory Item
+    // 保存编辑的库存项
     saveEditButton.addEventListener('click', () => {
       const name = editItemNameInput.value.trim();
       const quantity = editItemQuantityInput.value.trim();
       const unit = editItemUnitInput.value.trim();
-      const expiredDate = editItemExpiredDateInput.value; // Optional
+      const expiredDate = editItemExpiredDateInput.value; // 可选
       const location = editItemLocationInput.value.trim();
 
-      // Basic Validation
+      // 基本验证
       if (name === '' || quantity === '' || unit === '' || location === '') {
-        editItemError.textContent = 'Please fill in all required fields';
+        editItemError.textContent = '请填写所有必填字段';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        editItemError.textContent = 'User not authenticated';
+        editItemError.textContent = '用户未认证';
         return;
       }
 
-      // Prepare Updated Data Object
+      showLoading();
+
+      // 准备更新的数据对象
       const updatedData = {
         name,
         quantity: Number(quantity),
         unit,
         location,
         modifiedTime: new Date().toLocaleString(),
-        modifiedBy: user.displayName || 'Unknown'
+        modifiedBy: user.displayName || '未知'
       };
 
-      // If Expired Date is provided, add to data object
+      // 如果提供了过期日期，则添加到数据对象
       if (expiredDate) {
         updatedData.expiredDate = expiredDate;
       } else {
-        updatedData.expiredDate = null; // Or remove the field
+        updatedData.expiredDate = null; // 或者移除该字段
       }
 
       const itemRef = db.ref(`inventory/${user.uid}/${currentEditItemId}`);
       itemRef.update(updatedData, (error) => {
         if (error) {
-          editItemError.textContent = 'Failed to update item: ' + error.message;
+          editItemError.textContent = '更新库存项失败: ' + error.message;
         } else {
           editItemError.textContent = '';
           editModal.style.display = 'none';
         }
+        hideLoading();
       });
     });
+
+    // 事件委托：点击数量单元格或卡片中的数量进行编辑
+    document.addEventListener('click', (e) => {
+      if (e.target && e.target.classList.contains('clickable-quantity')) {
+        const itemId = e.target.getAttribute('data-item-id');
+        const user = auth.currentUser;
+        if (user) {
+          const itemRef = db.ref(`inventory/${user.uid}/${itemId}`);
+          itemRef.once('value', (snapshot) => {
+            const item = snapshot.val();
+            if (item) {
+              openEditModal(itemId, item.name, item.quantity, item.unit, item.expiredDate, item.location);
+            }
+          });
+        }
+      }
+    });
+
+    // 简单的邮箱验证函数
+    function validateEmail(email) {
+      const re = /\S+@\S+\.\S+/;
+      return re.test(email);
+    }
+
+    // 显示加载指示器
+    function showLoading() {
+      loadingIndicator.style.display = 'block';
+    }
+
+    // 隐藏加载指示器
+    function hideLoading() {
+      loadingIndicator.style.display = 'none';
+    }
   </script>
 </body>
 </html>
