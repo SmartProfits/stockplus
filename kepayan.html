@@ -9,6 +9,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
   
+  <!-- Include Font Awesome for Icons (Optional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pICvZonb6pj+/U6h8S86YtDj2OmyH9DlK6tm+VQf+U4km/DomZ+ZSSMwL8vqbsOYb7jz0VJo4zQ9ejO9L6LQDw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
   <style>
     /* Optimized CSS for better UI and responsiveness */
     body {
@@ -82,11 +85,16 @@
       font-size: 14px;
     }
 
+    /* Responsive Table Container */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
-      overflow-x: auto;
     }
 
     th, td {
@@ -133,6 +141,33 @@
       margin-top: 20px;
     }
 
+    /* Inventory Cards Container */
+    .cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    /* Individual Inventory Card */
+    .inventory-card {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Inventory Card Actions */
+    .inventory-card .card-actions {
+      margin-top: 10px;
+    }
+
+    .inventory-card .card-actions button {
+      width: auto;
+      padding: 8px 12px;
+      margin-right: 5px;
+      font-size: 14px;
+    }
+
     /* Responsive Design */
     @media (max-width: 600px) {
       #auth-container, #app-container {
@@ -153,6 +188,26 @@
 
       .modal-content {
         margin: 20% auto;
+      }
+
+      /* Hide table and show cards on small screens */
+      #inventory-table {
+        display: none;
+      }
+
+      #inventory-cards {
+        display: block;
+      }
+    }
+
+    @media (min-width: 601px) {
+      /* Show table and hide cards on larger screens */
+      #inventory-table {
+        display: table;
+      }
+
+      #inventory-cards {
+        display: none;
       }
     }
 
@@ -203,6 +258,71 @@
     .checkbox-container input {
       width: auto;
       margin-right: 10px;
+    }
+
+    /* Inventory Card Styles */
+    .inventory-card h4 {
+      margin: 0 0 10px 0;
+      color: #1976d2;
+    }
+
+    .inventory-card p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .inventory-card .card-actions button {
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .inventory-card .card-actions button:hover {
+      background-color: #1565c0;
+      transform: translateY(-2px);
+    }
+
+    /* Optional: Adjust table and card button icons */
+    button i {
+      pointer-events: none;
+    }
+
+    /* Optional: Add tooltips for icon buttons */
+    button[title] {
+      position: relative;
+    }
+
+    button[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 125%; /* Position above the button */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 5px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      font-size: 12px;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    button[title]::after {
+      content: '';
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
     }
   </style>
 </head>
@@ -259,23 +379,30 @@
       <!-- Inventory List Section -->
       <section id="inventory-list-section">
         <h3>Inventory List</h3>
-        <table id="inventory-table">
-          <thead>
-            <tr>
-              <th>Product Name</th>
-              <th>Quantity</th>
-              <th>Unit</th>
-              <th>Expired Date</th>
-              <th>Location</th>
-              <th>Modified Time</th>
-              <th>Modified By</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Inventory items will be dynamically populated -->
-          </tbody>
-        </table>
+        <!-- Responsive Table -->
+        <div class="table-responsive">
+          <table id="inventory-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th class="hide-on-mobile">Expired Date</th>
+                <th>Location</th>
+                <th class="hide-on-mobile">Modified Time</th>
+                <th class="hide-on-mobile">Modified By</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Inventory items will be dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Card Layout for Mobile -->
+        <div id="inventory-cards" class="cards-container" style="display: none;">
+          <!-- Inventory items as cards will be dynamically populated -->
+        </div>
         <p id="inventory-message"></p>
       </section>
     </main>
@@ -299,7 +426,7 @@
   <!-- Include JavaScript -->
   <script>
     // Firebase Configuration
-     const firebaseConfig = {
+    const firebaseConfig = {
       apiKey: "AIzaSyDAK5KVv9oln2qS5EfNzox1snM19wa83-o",
       authDomain: "smart-profits-stock.firebaseapp.com",
       databaseURL: "https://smart-profits-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -447,6 +574,7 @@
         authContainer.style.display = 'block';
         appContainer.style.display = 'none';
         inventoryTableBody.innerHTML = '';
+        document.getElementById('inventory-cards').innerHTML = '';
         inventoryMessage.textContent = '';
       }
     });
@@ -522,77 +650,61 @@
       inventoryRef.on('value', (snapshot) => {
         const data = snapshot.val();
         inventoryTableBody.innerHTML = '';
+        const inventoryCardsContainer = document.getElementById('inventory-cards');
+        inventoryCardsContainer.innerHTML = '';
+        
         if (data) {
           const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
           items.forEach(item => {
+            // Populate Table
             const tr = document.createElement('tr');
 
-            const nameTd = document.createElement('td');
-            nameTd.textContent = item.name;
-            tr.appendChild(nameTd);
-
-            const quantityTd = document.createElement('td');
-            quantityTd.textContent = item.quantity;
-            tr.appendChild(quantityTd);
-
-            const unitTd = document.createElement('td');
-            unitTd.textContent = item.unit;
-            tr.appendChild(unitTd);
-
-            const expiredDateTd = document.createElement('td');
-            expiredDateTd.textContent = item.expiredDate ? item.expiredDate : 'N/A';
-            tr.appendChild(expiredDateTd);
-
-            const locationTd = document.createElement('td');
-            locationTd.textContent = item.location;
-            tr.appendChild(locationTd);
-
-            const modifiedTimeTd = document.createElement('td');
-            modifiedTimeTd.textContent = item.modifiedTime;
-            tr.appendChild(modifiedTimeTd);
-
-            const modifiedByTd = document.createElement('td');
-            modifiedByTd.textContent = item.modifiedBy;
-            tr.appendChild(modifiedByTd);
-
-            const actionsTd = document.createElement('td');
-
-            // Edit Button
-            const editBtn = document.createElement('button');
-            editBtn.textContent = 'Edit';
-            editBtn.style.backgroundColor = '#ffa726';
-            editBtn.style.color = 'white';
-            editBtn.style.border = 'none';
-            editBtn.style.padding = '6px 12px';
-            editBtn.style.borderRadius = '4px';
-            editBtn.style.cursor = 'pointer';
-            editBtn.style.marginRight = '5px';
-            editBtn.addEventListener('click', () => {
-              openEditModal(item);
+            tr.innerHTML = `
+              <td>${item.name}</td>
+              <td>${item.quantity}</td>
+              <td>${item.unit}</td>
+              <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
+              <td>${item.location}</td>
+              <td class="hide-on-mobile">${item.modifiedTime}</td>
+              <td class="hide-on-mobile">${item.modifiedBy}</td>
+              <td>
+                <button title="Edit"><i class="fas fa-edit"></i></button>
+                <button title="Delete"><i class="fas fa-trash-alt"></i></button>
+              </td>
+            `;
+            // Add event listeners to buttons
+            tr.querySelector('button[title="Edit"]').addEventListener('click', () => {
+              openEditModal(item.id, item.name, item.quantity, item.unit, item.expiredDate, item.location);
             });
-            actionsTd.appendChild(editBtn);
-
-            // Delete Button
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.style.backgroundColor = '#d32f2f';
-            deleteBtn.style.color = 'white';
-            deleteBtn.style.border = 'none';
-            deleteBtn.style.padding = '6px 12px';
-            deleteBtn.style.borderRadius = '4px';
-            deleteBtn.style.cursor = 'pointer';
-            deleteBtn.addEventListener('click', () => {
-              if (confirm('Are you sure you want to delete this item?')) {
-                db.ref(`inventory/${userId}/${item.id}`).remove()
-                  .catch((error) => {
-                    alert('Failed to delete item: ' + error.message);
-                  });
-              }
+            tr.querySelector('button[title="Delete"]').addEventListener('click', () => {
+              deleteItem(userId, item.id);
             });
-            actionsTd.appendChild(deleteBtn);
-
-            tr.appendChild(actionsTd);
             inventoryTableBody.appendChild(tr);
+            
+            // Populate Cards
+            const card = document.createElement('div');
+            card.classList.add('inventory-card');
+            card.innerHTML = `
+              <h4>${item.name}</h4>
+              <p><strong>Quantity:</strong> ${item.quantity}</p>
+              <p><strong>Unit:</strong> ${item.unit}</p>
+              <p><strong>Expired Date:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
+              <p><strong>Location:</strong> ${item.location}</p>
+              <p><strong>Modified Time:</strong> ${item.modifiedTime}</p>
+              <p><strong>Modified By:</strong> ${item.modifiedBy}</p>
+              <div class="card-actions">
+                <button title="Edit"><i class="fas fa-edit"></i></button>
+                <button title="Delete"><i class="fas fa-trash-alt"></i></button>
+              </div>
+            `;
+            // Add event listeners to buttons
+            card.querySelector('button[title="Edit"]').addEventListener('click', () => {
+              openEditModal(item.id, item.name, item.quantity, item.unit, item.expiredDate, item.location);
+            });
+            card.querySelector('button[title="Delete"]').addEventListener('click', () => {
+              deleteItem(userId, item.id);
+            });
+            inventoryCardsContainer.appendChild(card);
           });
           inventoryMessage.textContent = '';
         } else {
@@ -601,14 +713,24 @@
       });
     }
 
+    // Delete Item Function
+    function deleteItem(userId, itemId) {
+      if (confirm('Are you sure you want to delete this item?')) {
+        db.ref(`inventory/${userId}/${itemId}`).remove()
+          .catch((error) => {
+            alert('Failed to delete item: ' + error.message);
+          });
+      }
+    }
+
     // Open Edit Modal
-    function openEditModal(item) {
-      currentEditItemId = item.id;
-      editItemNameInput.value = item.name;
-      editItemQuantityInput.value = item.quantity;
-      editItemUnitInput.value = item.unit;
-      editItemExpiredDateInput.value = item.expiredDate || '';
-      editItemLocationInput.value = item.location;
+    function openEditModal(itemId, name, quantity, unit, expiredDate, location) {
+      currentEditItemId = itemId;
+      editItemNameInput.value = name;
+      editItemQuantityInput.value = quantity;
+      editItemUnitInput.value = unit;
+      editItemExpiredDateInput.value = expiredDate || '';
+      editItemLocationInput.value = location;
       editItemError.textContent = '';
       editModal.style.display = 'block';
     }
