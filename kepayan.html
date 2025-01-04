@@ -192,6 +192,18 @@
       color: black;
       text-decoration: none;
     }
+
+    /* Checkbox Styling */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .checkbox-container input {
+      width: auto;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
@@ -204,6 +216,11 @@
         <h3>Login</h3>
         <input type="email" id="login-email" placeholder="Email" required>
         <input type="password" id="login-password" placeholder="Password" required>
+        <!-- Remember Me Checkbox -->
+        <div class="checkbox-container">
+          <input type="checkbox" id="remember-me">
+          <label for="remember-me">Remember Me</label>
+        </div>
         <button id="login-button">Login</button>
         <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
         <p id="login-error" class="error-message"></p>
@@ -282,7 +299,7 @@
   <!-- Include JavaScript -->
   <script>
     // Firebase Configuration
-    const firebaseConfig = {
+     const firebaseConfig = {
       apiKey: "AIzaSyDAK5KVv9oln2qS5EfNzox1snM19wa83-o",
       authDomain: "smart-profits-stock.firebaseapp.com",
       databaseURL: "https://smart-profits-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -292,7 +309,6 @@
       appId: "1:1029424292465:web:6de46925db8818d462b1d0",
       measurementId: "G-R0K4Q7JTGE"
     };
-
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -387,18 +403,27 @@
         });
     });
 
-    // Login Functionality
+    // Login Functionality with "Remember Me"
     loginButton.addEventListener('click', (e) => {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value.trim();
+      const rememberMe = document.getElementById('remember-me').checked;
 
       if (email === '' || password === '') {
         loginError.textContent = 'Please fill in all fields';
         return;
       }
 
-      auth.signInWithEmailAndPassword(email, password)
+      // Set persistence based on "Remember Me"
+      const persistence = rememberMe
+        ? firebase.auth.Auth.Persistence.LOCAL
+        : firebase.auth.Auth.Persistence.SESSION;
+
+      auth.setPersistence(persistence)
+        .then(() => {
+          return auth.signInWithEmailAndPassword(email, password);
+        })
         .then((userCredential) => {
           // Login successful
           loginError.textContent = '';
