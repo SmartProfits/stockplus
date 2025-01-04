@@ -10,68 +10,87 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
   
   <style>
-    /* 简单的CSS样式 */
+    /* 优化后的CSS样式 */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f6f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef2f5;
       margin: 0;
       padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
     #auth-container, #app-container {
+      width: 90%;
       max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 20px;
     }
 
     h2, h3 {
-      color: #333;
+      color: #333333;
+      margin: 0;
     }
 
     input {
       width: 100%;
-      padding: 10px;
-      margin: 8px 0;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #cccccc;
+      border-radius: 6px;
       box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #1976d2;
+      outline: none;
+      box-shadow: 0 0 5px rgba(25, 118, 210, 0.5);
     }
 
     button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       background-color: #1976d2;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     button:hover {
       background-color: #1565c0;
+      transform: translateY(-2px);
     }
 
     .error-message {
-      color: red;
+      color: #d32f2f;
       margin-top: 5px;
+      font-size: 14px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
     th, td {
-      padding: 12px;
-      border: 1px solid #ddd;
+      padding: 14px;
+      border: 1px solid #dddddd;
       text-align: left;
     }
 
@@ -81,12 +100,13 @@
     }
 
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: #f9f9f9;
     }
 
     a {
       color: #1976d2;
       text-decoration: none;
+      font-weight: bold;
     }
 
     a:hover {
@@ -94,15 +114,77 @@
     }
 
     #logout-button {
+      width: auto;
+      padding: 8px 16px;
       background-color: #d32f2f;
+      margin: 0;
+      border-radius: 6px;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     #logout-button:hover {
       background-color: #c62828;
+      transform: translateY(-2px);
     }
 
     #add-item-section, #inventory-list-section {
       margin-top: 20px;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 600px) {
+      #auth-container, #app-container {
+        padding: 20px;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+
+      button {
+        font-size: 14px;
+      }
+
+      #logout-button {
+        padding: 6px 12px;
+      }
+    }
+
+    /* 模态框样式 */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      overflow: auto; 
+      background-color: rgba(0,0,0,0.4); 
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto; 
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%; 
+      max-width: 500px;
+      border-radius: 8px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
     }
   </style>
 </head>
@@ -123,6 +205,7 @@
       <!-- 注册表单 -->
       <div id="register-form" style="display: none;">
         <h3>注册</h3>
+        <input type="text" id="register-name" placeholder="名字" required>
         <input type="email" id="register-email" placeholder="邮箱" required>
         <input type="password" id="register-password" placeholder="密码" required>
         <button id="register-button">注册</button>
@@ -144,6 +227,8 @@
         <h3>添加新库存项</h3>
         <input type="text" id="item-name" placeholder="商品名称" required>
         <input type="number" id="item-quantity" placeholder="数量" required>
+        <input type="text" id="item-unit" placeholder="单位（如件、盒、千克）" required>
+        <input type="date" id="item-expired-date" placeholder="过期日期（可选）">
         <input type="text" id="item-location" placeholder="位置" required>
         <button id="add-item-button">添加</button>
         <p id="add-item-error" class="error-message"></p>
@@ -156,7 +241,10 @@
             <tr>
               <th>商品名称</th>
               <th>数量</th>
+              <th>单位</th>
+              <th>过期日期</th>
               <th>位置</th>
+              <th>修改时间</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -167,6 +255,21 @@
         <p id="inventory-message"></p>
       </section>
     </main>
+  </div>
+
+  <!-- 编辑库存项模态框 -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3>编辑库存项</h3>
+      <input type="text" id="edit-item-name" placeholder="商品名称" required>
+      <input type="number" id="edit-item-quantity" placeholder="数量" required>
+      <input type="text" id="edit-item-unit" placeholder="单位（如件、盒、千克）" required>
+      <input type="date" id="edit-item-expired-date" placeholder="过期日期（可选）">
+      <input type="text" id="edit-item-location" placeholder="位置" required>
+      <button id="save-edit-button">保存修改</button>
+      <p id="edit-item-error" class="error-message"></p>
+    </div>
   </div>
 
   <!-- 引入 JavaScript -->
@@ -205,10 +308,25 @@
     const addItemButton = document.getElementById('add-item-button');
     const itemNameInput = document.getElementById('item-name');
     const itemQuantityInput = document.getElementById('item-quantity');
+    const itemUnitInput = document.getElementById('item-unit');
+    const itemExpiredDateInput = document.getElementById('item-expired-date');
     const itemLocationInput = document.getElementById('item-location');
     const addItemError = document.getElementById('add-item-error');
     const inventoryTableBody = document.querySelector('#inventory-table tbody');
     const inventoryMessage = document.getElementById('inventory-message');
+
+    // 编辑模态框元素
+    const editModal = document.getElementById('edit-modal');
+    const closeModalSpan = document.querySelector('.close');
+    const editItemNameInput = document.getElementById('edit-item-name');
+    const editItemQuantityInput = document.getElementById('edit-item-quantity');
+    const editItemUnitInput = document.getElementById('edit-item-unit');
+    const editItemExpiredDateInput = document.getElementById('edit-item-expired-date');
+    const editItemLocationInput = document.getElementById('edit-item-location');
+    const saveEditButton = document.getElementById('save-edit-button');
+    const editItemError = document.getElementById('edit-item-error');
+
+    let currentEditItemId = null; // 当前编辑的库存项ID
 
     // 切换到注册表单
     showRegisterLink.addEventListener('click', (e) => {
@@ -227,21 +345,36 @@
     // 注册功能
     registerButton.addEventListener('click', (e) => {
       e.preventDefault();
+      const name = document.getElementById('register-name').value.trim();
       const email = document.getElementById('register-email').value.trim();
       const password = document.getElementById('register-password').value.trim();
 
-      if (email === '' || password === '') {
+      if (name === '' || email === '' || password === '') {
         registerError.textContent = '请填写所有字段';
         return;
       }
 
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          // 注册成功，自动登录
+          // 注册成功，设置用户名字
+          return userCredential.user.updateProfile({
+            displayName: name
+          });
+        })
+        .then(() => {
+          // 额外：可以在数据库中保存用户信息
+          const user = auth.currentUser;
+          if (user) {
+            db.ref('users/' + user.uid).set({
+              name: user.displayName,
+              email: user.email
+            });
+          }
           registerError.textContent = '';
           registerForm.reset();
         })
         .catch((error) => {
+          console.error('注册错误详细信息：', error);
           registerError.textContent = error.message;
         });
     });
@@ -264,6 +397,7 @@
           loginForm.reset();
         })
         .catch((error) => {
+          console.error('登录错误详细信息：', error);
           loginError.textContent = error.message;
         });
     });
@@ -284,21 +418,30 @@
       }
     });
 
-    // 登出功能
+    // 登出功能，添加确认和成功提示
     logoutButton.addEventListener('click', () => {
-      auth.signOut().catch((error) => {
-        alert('登出失败：' + error.message);
-      });
+      if (confirm('确定要登出吗？')) {
+        auth.signOut()
+          .then(() => {
+            alert('已成功登出');
+          })
+          .catch((error) => {
+            alert('登出失败：' + error.message);
+          });
+      }
     });
 
     // 添加库存项
     addItemButton.addEventListener('click', () => {
       const name = itemNameInput.value.trim();
       const quantity = itemQuantityInput.value.trim();
+      const unit = itemUnitInput.value.trim();
+      const expiredDate = itemExpiredDateInput.value; // 可选
       const location = itemLocationInput.value.trim();
 
-      if (name === '' || quantity === '' || location === '') {
-        addItemError.textContent = '请填写所有字段';
+      // 基本验证
+      if (name === '' || quantity === '' || unit === '' || location === '') {
+        addItemError.textContent = '请填写所有必填字段';
         return;
       }
 
@@ -308,19 +451,32 @@
         return;
       }
 
-      const inventoryRef = db.ref('inventory/' + user.uid);
-      const newItemRef = inventoryRef.push();
-      newItemRef.set({
+      // 准备数据对象
+      const itemData = {
         name,
         quantity: Number(quantity),
-        location
-      }, (error) => {
+        unit,
+        location,
+        createdTime: new Date().toLocaleString(),
+        modifiedTime: new Date().toLocaleString()
+      };
+
+      // 如果填写了过期日期，则添加到数据对象中
+      if (expiredDate) {
+        itemData.expiredDate = expiredDate;
+      }
+
+      const inventoryRef = db.ref('inventory/' + user.uid);
+      const newItemRef = inventoryRef.push();
+      newItemRef.set(itemData, (error) => {
         if (error) {
           addItemError.textContent = '添加失败：' + error.message;
         } else {
           addItemError.textContent = '';
           itemNameInput.value = '';
           itemQuantityInput.value = '';
+          itemUnitInput.value = '';
+          itemExpiredDateInput.value = '';
           itemLocationInput.value = '';
         }
       });
@@ -345,11 +501,38 @@
             quantityTd.textContent = item.quantity;
             tr.appendChild(quantityTd);
 
+            const unitTd = document.createElement('td');
+            unitTd.textContent = item.unit;
+            tr.appendChild(unitTd);
+
+            const expiredDateTd = document.createElement('td');
+            expiredDateTd.textContent = item.expiredDate ? item.expiredDate : 'N/A';
+            tr.appendChild(expiredDateTd);
+
             const locationTd = document.createElement('td');
             locationTd.textContent = item.location;
             tr.appendChild(locationTd);
 
+            const modifiedTimeTd = document.createElement('td');
+            modifiedTimeTd.textContent = item.modifiedTime;
+            tr.appendChild(modifiedTimeTd);
+
             const actionsTd = document.createElement('td');
+
+            // 编辑按钮
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '编辑';
+            editBtn.style.backgroundColor = '#ffa726';
+            editBtn.style.color = 'white';
+            editBtn.style.border = 'none';
+            editBtn.style.padding = '6px 12px';
+            editBtn.style.borderRadius = '4px';
+            editBtn.style.cursor = 'pointer';
+            editBtn.style.marginRight = '5px';
+            editBtn.addEventListener('click', () => {
+              openEditModal(item);
+            });
+            actionsTd.appendChild(editBtn);
 
             // 删除按钮
             const deleteBtn = document.createElement('button');
@@ -357,7 +540,7 @@
             deleteBtn.style.backgroundColor = '#d32f2f';
             deleteBtn.style.color = 'white';
             deleteBtn.style.border = 'none';
-            deleteBtn.style.padding = '5px 10px';
+            deleteBtn.style.padding = '6px 12px';
             deleteBtn.style.borderRadius = '4px';
             deleteBtn.style.cursor = 'pointer';
             deleteBtn.addEventListener('click', () => {
@@ -379,6 +562,76 @@
         }
       });
     }
+
+    // 打开编辑模态框
+    function openEditModal(item) {
+      currentEditItemId = item.id;
+      editItemNameInput.value = item.name;
+      editItemQuantityInput.value = item.quantity;
+      editItemUnitInput.value = item.unit;
+      editItemExpiredDateInput.value = item.expiredDate || '';
+      editItemLocationInput.value = item.location;
+      editItemError.textContent = '';
+      editModal.style.display = 'block';
+    }
+
+    // 关闭编辑模态框
+    closeModalSpan.onclick = function() {
+      editModal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target == editModal) {
+        editModal.style.display = 'none';
+      }
+    }
+
+    // 保存编辑后的库存项
+    saveEditButton.addEventListener('click', () => {
+      const name = editItemNameInput.value.trim();
+      const quantity = editItemQuantityInput.value.trim();
+      const unit = editItemUnitInput.value.trim();
+      const expiredDate = editItemExpiredDateInput.value; // 可选
+      const location = editItemLocationInput.value.trim();
+
+      // 基本验证
+      if (name === '' || quantity === '' || unit === '' || location === '') {
+        editItemError.textContent = '请填写所有必填字段';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        editItemError.textContent = '用户未认证';
+        return;
+      }
+
+      // 准备更新的数据对象
+      const updatedData = {
+        name,
+        quantity: Number(quantity),
+        unit,
+        location,
+        modifiedTime: new Date().toLocaleString()
+      };
+
+      // 如果填写了过期日期，则添加到数据对象中
+      if (expiredDate) {
+        updatedData.expiredDate = expiredDate;
+      } else {
+        updatedData.expiredDate = null; // 或者删除该字段
+      }
+
+      const itemRef = db.ref(`inventory/${user.uid}/${currentEditItemId}`);
+      itemRef.update(updatedData, (error) => {
+        if (error) {
+          editItemError.textContent = '更新失败：' + error.message;
+        } else {
+          editItemError.textContent = '';
+          editModal.style.display = 'none';
+        }
+      });
+    });
   </script>
 </body>
 </html>
