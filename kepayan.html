@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>仓库管理系统</title>
+  <!-- 引入 Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
+  
+  <style>
+    /* 简单的CSS样式 */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    #auth-container, #app-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h2, h3 {
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #1976d2;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    a {
+      color: #1976d2;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #logout-button {
+      background-color: #d32f2f;
+    }
+
+    #logout-button:hover {
+      background-color: #c62828;
+    }
+
+    #add-item-section, #inventory-list-section {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 用户认证容器 -->
+  <div id="auth-container">
+    <h2>仓库管理系统</h2>
+    <div id="auth-forms">
+      <!-- 登录表单 -->
+      <div id="login-form">
+        <h3>登录</h3>
+        <input type="email" id="login-email" placeholder="邮箱" required>
+        <input type="password" id="login-password" placeholder="密码" required>
+        <button id="login-button">登录</button>
+        <p>没有账户？<a href="#" id="show-register">注册</a></p>
+        <p id="login-error" class="error-message"></p>
+      </div>
+      <!-- 注册表单 -->
+      <div id="register-form" style="display: none;">
+        <h3>注册</h3>
+        <input type="email" id="register-email" placeholder="邮箱" required>
+        <input type="password" id="register-password" placeholder="密码" required>
+        <button id="register-button">注册</button>
+        <p>已有账户？<a href="#" id="show-login">登录</a></p>
+        <p id="register-error" class="error-message"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 应用主容器 -->
+  <div id="app-container" style="display: none;">
+    <header>
+      <h2>仓库管理系统</h2>
+      <button id="logout-button">登出</button>
+    </header>
+    <main>
+      <!-- 添加库存项部分 -->
+      <section id="add-item-section">
+        <h3>添加新库存项</h3>
+        <input type="text" id="item-name" placeholder="商品名称" required>
+        <input type="number" id="item-quantity" placeholder="数量" required>
+        <input type="text" id="item-location" placeholder="位置" required>
+        <button id="add-item-button">添加</button>
+        <p id="add-item-error" class="error-message"></p>
+      </section>
+      <!-- 库存列表部分 -->
+      <section id="inventory-list-section">
+        <h3>库存列表</h3>
+        <table id="inventory-table">
+          <thead>
+            <tr>
+              <th>商品名称</th>
+              <th>数量</th>
+              <th>位置</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 库存项将动态填充 -->
+          </tbody>
+        </table>
+        <p id="inventory-message"></p>
+      </section>
+    </main>
+  </div>
+
+  <!-- 引入 JavaScript -->
+  <script>
+    // Firebase 配置
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAK5KVv9oln2qS5EfNzox1snM19wa83-o",
+      authDomain: "smart-profits-stock.firebaseapp.com",
+      databaseURL: "https://smart-profits-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "smart-profits-stock",
+      storageBucket: "smart-profits-stock.firebasestorage.app",
+      messagingSenderId: "1029424292465",
+      appId: "1:1029424292465:web:6de46925db8818d462b1d0",
+      measurementId: "G-R0K4Q7JTGE"
+    };
+
+    // 初始化 Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    const analytics = firebase.analytics();
+
+    // 获取页面元素
+    const authContainer = document.getElementById('auth-container');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const showRegisterLink = document.getElementById('show-register');
+    const showLoginLink = document.getElementById('show-login');
+    const loginButton = document.getElementById('login-button');
+    const registerButton = document.getElementById('register-button');
+    const loginError = document.getElementById('login-error');
+    const registerError = document.getElementById('register-error');
+
+    const appContainer = document.getElementById('app-container');
+    const logoutButton = document.getElementById('logout-button');
+    const addItemButton = document.getElementById('add-item-button');
+    const itemNameInput = document.getElementById('item-name');
+    const itemQuantityInput = document.getElementById('item-quantity');
+    const itemLocationInput = document.getElementById('item-location');
+    const addItemError = document.getElementById('add-item-error');
+    const inventoryTableBody = document.querySelector('#inventory-table tbody');
+    const inventoryMessage = document.getElementById('inventory-message');
+
+    // 切换到注册表单
+    showRegisterLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+    });
+
+    // 切换到登录表单
+    showLoginLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerForm.style.display = 'none';
+      loginForm.style.display = 'block';
+    });
+
+    // 注册功能
+    registerButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value.trim();
+
+      if (email === '' || password === '') {
+        registerError.textContent = '请填写所有字段';
+        return;
+      }
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // 注册成功，自动登录
+          registerError.textContent = '';
+          registerForm.reset();
+        })
+        .catch((error) => {
+          registerError.textContent = error.message;
+        });
+    });
+
+    // 登录功能
+    loginButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+
+      if (email === '' || password === '') {
+        loginError.textContent = '请填写所有字段';
+        return;
+      }
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // 登录成功
+          loginError.textContent = '';
+          loginForm.reset();
+        })
+        .catch((error) => {
+          loginError.textContent = error.message;
+        });
+    });
+
+    // 监听认证状态变化
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        // 用户已登录，显示应用界面
+        authContainer.style.display = 'none';
+        appContainer.style.display = 'block';
+        loadInventory(user.uid);
+      } else {
+        // 用户未登录，显示登录/注册界面
+        authContainer.style.display = 'block';
+        appContainer.style.display = 'none';
+        inventoryTableBody.innerHTML = '';
+        inventoryMessage.textContent = '';
+      }
+    });
+
+    // 登出功能
+    logoutButton.addEventListener('click', () => {
+      auth.signOut().catch((error) => {
+        alert('登出失败：' + error.message);
+      });
+    });
+
+    // 添加库存项
+    addItemButton.addEventListener('click', () => {
+      const name = itemNameInput.value.trim();
+      const quantity = itemQuantityInput.value.trim();
+      const location = itemLocationInput.value.trim();
+
+      if (name === '' || quantity === '' || location === '') {
+        addItemError.textContent = '请填写所有字段';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        addItemError.textContent = '用户未认证';
+        return;
+      }
+
+      const inventoryRef = db.ref('inventory/' + user.uid);
+      const newItemRef = inventoryRef.push();
+      newItemRef.set({
+        name,
+        quantity: Number(quantity),
+        location
+      }, (error) => {
+        if (error) {
+          addItemError.textContent = '添加失败：' + error.message;
+        } else {
+          addItemError.textContent = '';
+          itemNameInput.value = '';
+          itemQuantityInput.value = '';
+          itemLocationInput.value = '';
+        }
+      });
+    });
+
+    // 加载库存列表
+    function loadInventory(userId) {
+      const inventoryRef = db.ref('inventory/' + userId);
+      inventoryRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        inventoryTableBody.innerHTML = '';
+        if (data) {
+          const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+          items.forEach(item => {
+            const tr = document.createElement('tr');
+
+            const nameTd = document.createElement('td');
+            nameTd.textContent = item.name;
+            tr.appendChild(nameTd);
+
+            const quantityTd = document.createElement('td');
+            quantityTd.textContent = item.quantity;
+            tr.appendChild(quantityTd);
+
+            const locationTd = document.createElement('td');
+            locationTd.textContent = item.location;
+            tr.appendChild(locationTd);
+
+            const actionsTd = document.createElement('td');
+
+            // 删除按钮
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '删除';
+            deleteBtn.style.backgroundColor = '#d32f2f';
+            deleteBtn.style.color = 'white';
+            deleteBtn.style.border = 'none';
+            deleteBtn.style.padding = '5px 10px';
+            deleteBtn.style.borderRadius = '4px';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.addEventListener('click', () => {
+              if (confirm('确定要删除此项吗？')) {
+                db.ref(`inventory/${userId}/${item.id}`).remove()
+                  .catch((error) => {
+                    alert('删除失败：' + error.message);
+                  });
+              }
+            });
+            actionsTd.appendChild(deleteBtn);
+
+            tr.appendChild(actionsTd);
+            inventoryTableBody.appendChild(tr);
+          });
+          inventoryMessage.textContent = '';
+        } else {
+          inventoryMessage.textContent = '暂无库存数据';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
