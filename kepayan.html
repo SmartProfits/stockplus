@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>仓库管理系统</title>
-  <!-- 引入 Firebase SDK -->
+  <title>Warehouse Management System</title>
+  <!-- Include Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
   
   <style>
-    /* 优化后的CSS样式 */
+    /* Optimized CSS for better UI and responsiveness */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #eef2f5;
@@ -86,12 +86,14 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
+      overflow-x: auto;
     }
 
     th, td {
       padding: 14px;
       border: 1px solid #dddddd;
       text-align: left;
+      word-wrap: break-word;
     }
 
     th {
@@ -131,7 +133,7 @@
       margin-top: 20px;
     }
 
-    /* 响应式设计 */
+    /* Responsive Design */
     @media (max-width: 600px) {
       #auth-container, #app-container {
         padding: 20px;
@@ -148,9 +150,13 @@
       #logout-button {
         padding: 6px 12px;
       }
+
+      .modal-content {
+        margin: 20% auto;
+      }
     }
 
-    /* 模态框样式 */
+    /* Modal Styles */
     .modal {
       display: none; 
       position: fixed; 
@@ -189,67 +195,68 @@
   </style>
 </head>
 <body>
-  <!-- 用户认证容器 -->
+  <!-- User Authentication Container -->
   <div id="auth-container">
-    <h2>仓库管理系统</h2>
+    <h2>Warehouse Management System</h2>
     <div id="auth-forms">
-      <!-- 登录表单 -->
+      <!-- Login Form -->
       <div id="login-form">
-        <h3>登录</h3>
-        <input type="email" id="login-email" placeholder="邮箱" required>
-        <input type="password" id="login-password" placeholder="密码" required>
-        <button id="login-button">登录</button>
-        <p>没有账户？<a href="#" id="show-register">注册</a></p>
+        <h3>Login</h3>
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button id="login-button">Login</button>
+        <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
         <p id="login-error" class="error-message"></p>
       </div>
-      <!-- 注册表单 -->
+      <!-- Register Form -->
       <div id="register-form" style="display: none;">
-        <h3>注册</h3>
-        <input type="text" id="register-name" placeholder="名字" required>
-        <input type="email" id="register-email" placeholder="邮箱" required>
-        <input type="password" id="register-password" placeholder="密码" required>
-        <button id="register-button">注册</button>
-        <p>已有账户？<a href="#" id="show-login">登录</a></p>
+        <h3>Register</h3>
+        <input type="text" id="register-name" placeholder="Name" required>
+        <input type="email" id="register-email" placeholder="Email" required>
+        <input type="password" id="register-password" placeholder="Password" required>
+        <button id="register-button">Register</button>
+        <p>Already have an account? <a href="#" id="show-login">Login</a></p>
         <p id="register-error" class="error-message"></p>
       </div>
     </div>
   </div>
 
-  <!-- 应用主容器 -->
+  <!-- Main Application Container -->
   <div id="app-container" style="display: none;">
     <header>
-      <h2>仓库管理系统</h2>
-      <button id="logout-button">登出</button>
+      <h2>Warehouse Management System</h2>
+      <button id="logout-button">Logout</button>
     </header>
     <main>
-      <!-- 添加库存项部分 -->
+      <!-- Add Inventory Item Section -->
       <section id="add-item-section">
-        <h3>添加新库存项</h3>
-        <input type="text" id="item-name" placeholder="商品名称" required>
-        <input type="number" id="item-quantity" placeholder="数量" required>
-        <input type="text" id="item-unit" placeholder="单位（如件、盒、千克）" required>
-        <input type="date" id="item-expired-date" placeholder="过期日期（可选）">
-        <input type="text" id="item-location" placeholder="位置" required>
-        <button id="add-item-button">添加</button>
+        <h3>Add New Inventory Item</h3>
+        <input type="text" id="item-name" placeholder="Product Name" required>
+        <input type="number" id="item-quantity" placeholder="Quantity" required>
+        <input type="text" id="item-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
+        <input type="date" id="item-expired-date" placeholder="Expired Date (Optional)">
+        <input type="text" id="item-location" placeholder="Location" required>
+        <button id="add-item-button">Add</button>
         <p id="add-item-error" class="error-message"></p>
       </section>
-      <!-- 库存列表部分 -->
+      <!-- Inventory List Section -->
       <section id="inventory-list-section">
-        <h3>库存列表</h3>
+        <h3>Inventory List</h3>
         <table id="inventory-table">
           <thead>
             <tr>
-              <th>商品名称</th>
-              <th>数量</th>
-              <th>单位</th>
-              <th>过期日期</th>
-              <th>位置</th>
-              <th>修改时间</th>
-              <th>操作</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Expired Date</th>
+              <th>Location</th>
+              <th>Modified Time</th>
+              <th>Modified By</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <!-- 库存项将动态填充 -->
+            <!-- Inventory items will be dynamically populated -->
           </tbody>
         </table>
         <p id="inventory-message"></p>
@@ -257,24 +264,24 @@
     </main>
   </div>
 
-  <!-- 编辑库存项模态框 -->
+  <!-- Edit Inventory Item Modal -->
   <div id="edit-modal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h3>编辑库存项</h3>
-      <input type="text" id="edit-item-name" placeholder="商品名称" required>
-      <input type="number" id="edit-item-quantity" placeholder="数量" required>
-      <input type="text" id="edit-item-unit" placeholder="单位（如件、盒、千克）" required>
-      <input type="date" id="edit-item-expired-date" placeholder="过期日期（可选）">
-      <input type="text" id="edit-item-location" placeholder="位置" required>
-      <button id="save-edit-button">保存修改</button>
+      <h3>Edit Inventory Item</h3>
+      <input type="text" id="edit-item-name" placeholder="Product Name" required>
+      <input type="number" id="edit-item-quantity" placeholder="Quantity" required>
+      <input type="text" id="edit-item-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
+      <input type="date" id="edit-item-expired-date" placeholder="Expired Date (Optional)">
+      <input type="text" id="edit-item-location" placeholder="Location" required>
+      <button id="save-edit-button">Save Changes</button>
       <p id="edit-item-error" class="error-message"></p>
     </div>
   </div>
 
-  <!-- 引入 JavaScript -->
+  <!-- Include JavaScript -->
   <script>
-    // Firebase 配置
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDAK5KVv9oln2qS5EfNzox1snM19wa83-o",
       authDomain: "smart-profits-stock.firebaseapp.com",
@@ -286,13 +293,14 @@
       measurementId: "G-R0K4Q7JTGE"
     };
 
-    // 初始化 Firebase
+
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
     const analytics = firebase.analytics();
 
-    // 获取页面元素
+    // Get page elements
     const authContainer = document.getElementById('auth-container');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
@@ -315,7 +323,7 @@
     const inventoryTableBody = document.querySelector('#inventory-table tbody');
     const inventoryMessage = document.getElementById('inventory-message');
 
-    // 编辑模态框元素
+    // Edit Modal Elements
     const editModal = document.getElementById('edit-modal');
     const closeModalSpan = document.querySelector('.close');
     const editItemNameInput = document.getElementById('edit-item-name');
@@ -326,23 +334,23 @@
     const saveEditButton = document.getElementById('save-edit-button');
     const editItemError = document.getElementById('edit-item-error');
 
-    let currentEditItemId = null; // 当前编辑的库存项ID
+    let currentEditItemId = null; // Currently editing item ID
 
-    // 切换到注册表单
+    // Switch to Register Form
     showRegisterLink.addEventListener('click', (e) => {
       e.preventDefault();
       loginForm.style.display = 'none';
       registerForm.style.display = 'block';
     });
 
-    // 切换到登录表单
+    // Switch to Login Form
     showLoginLink.addEventListener('click', (e) => {
       e.preventDefault();
       registerForm.style.display = 'none';
       loginForm.style.display = 'block';
     });
 
-    // 注册功能
+    // Register Functionality
     registerButton.addEventListener('click', (e) => {
       e.preventDefault();
       const name = document.getElementById('register-name').value.trim();
@@ -350,19 +358,19 @@
       const password = document.getElementById('register-password').value.trim();
 
       if (name === '' || email === '' || password === '') {
-        registerError.textContent = '请填写所有字段';
+        registerError.textContent = 'Please fill in all fields';
         return;
       }
 
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          // 注册成功，设置用户名字
+          // Registration successful, set display name
           return userCredential.user.updateProfile({
             displayName: name
           });
         })
         .then(() => {
-          // 额外：可以在数据库中保存用户信息
+          // Optionally save user info to the database
           const user = auth.currentUser;
           if (user) {
             db.ref('users/' + user.uid).set({
@@ -374,43 +382,43 @@
           registerForm.reset();
         })
         .catch((error) => {
-          console.error('注册错误详细信息：', error);
+          console.error('Registration Error:', error);
           registerError.textContent = error.message;
         });
     });
 
-    // 登录功能
+    // Login Functionality
     loginButton.addEventListener('click', (e) => {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value.trim();
 
       if (email === '' || password === '') {
-        loginError.textContent = '请填写所有字段';
+        loginError.textContent = 'Please fill in all fields';
         return;
       }
 
       auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          // 登录成功
+          // Login successful
           loginError.textContent = '';
           loginForm.reset();
         })
         .catch((error) => {
-          console.error('登录错误详细信息：', error);
+          console.error('Login Error:', error);
           loginError.textContent = error.message;
         });
     });
 
-    // 监听认证状态变化
+    // Listen for Authentication State Changes
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // 用户已登录，显示应用界面
+        // User is logged in, show app interface
         authContainer.style.display = 'none';
         appContainer.style.display = 'block';
         loadInventory(user.uid);
       } else {
-        // 用户未登录，显示登录/注册界面
+        // User is not logged in, show login/register interface
         authContainer.style.display = 'block';
         appContainer.style.display = 'none';
         inventoryTableBody.innerHTML = '';
@@ -418,50 +426,51 @@
       }
     });
 
-    // 登出功能，添加确认和成功提示
+    // Logout Functionality with Additional Features
     logoutButton.addEventListener('click', () => {
-      if (confirm('确定要登出吗？')) {
+      if (confirm('Are you sure you want to logout?')) {
         auth.signOut()
           .then(() => {
-            alert('已成功登出');
+            alert('Successfully logged out');
           })
           .catch((error) => {
-            alert('登出失败：' + error.message);
+            alert('Logout failed: ' + error.message);
           });
       }
     });
 
-    // 添加库存项
+    // Add Inventory Item
     addItemButton.addEventListener('click', () => {
       const name = itemNameInput.value.trim();
       const quantity = itemQuantityInput.value.trim();
       const unit = itemUnitInput.value.trim();
-      const expiredDate = itemExpiredDateInput.value; // 可选
+      const expiredDate = itemExpiredDateInput.value; // Optional
       const location = itemLocationInput.value.trim();
 
-      // 基本验证
+      // Basic Validation
       if (name === '' || quantity === '' || unit === '' || location === '') {
-        addItemError.textContent = '请填写所有必填字段';
+        addItemError.textContent = 'Please fill in all required fields';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        addItemError.textContent = '用户未认证';
+        addItemError.textContent = 'User not authenticated';
         return;
       }
 
-      // 准备数据对象
+      // Prepare Data Object
       const itemData = {
         name,
         quantity: Number(quantity),
         unit,
         location,
         createdTime: new Date().toLocaleString(),
-        modifiedTime: new Date().toLocaleString()
+        modifiedTime: new Date().toLocaleString(),
+        modifiedBy: user.displayName || 'Unknown'
       };
 
-      // 如果填写了过期日期，则添加到数据对象中
+      // Add Expired Date if provided
       if (expiredDate) {
         itemData.expiredDate = expiredDate;
       }
@@ -470,7 +479,7 @@
       const newItemRef = inventoryRef.push();
       newItemRef.set(itemData, (error) => {
         if (error) {
-          addItemError.textContent = '添加失败：' + error.message;
+          addItemError.textContent = 'Failed to add item: ' + error.message;
         } else {
           addItemError.textContent = '';
           itemNameInput.value = '';
@@ -482,7 +491,7 @@
       });
     });
 
-    // 加载库存列表
+    // Load Inventory List
     function loadInventory(userId) {
       const inventoryRef = db.ref('inventory/' + userId);
       inventoryRef.on('value', (snapshot) => {
@@ -517,11 +526,15 @@
             modifiedTimeTd.textContent = item.modifiedTime;
             tr.appendChild(modifiedTimeTd);
 
+            const modifiedByTd = document.createElement('td');
+            modifiedByTd.textContent = item.modifiedBy;
+            tr.appendChild(modifiedByTd);
+
             const actionsTd = document.createElement('td');
 
-            // 编辑按钮
+            // Edit Button
             const editBtn = document.createElement('button');
-            editBtn.textContent = '编辑';
+            editBtn.textContent = 'Edit';
             editBtn.style.backgroundColor = '#ffa726';
             editBtn.style.color = 'white';
             editBtn.style.border = 'none';
@@ -534,9 +547,9 @@
             });
             actionsTd.appendChild(editBtn);
 
-            // 删除按钮
+            // Delete Button
             const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = '删除';
+            deleteBtn.textContent = 'Delete';
             deleteBtn.style.backgroundColor = '#d32f2f';
             deleteBtn.style.color = 'white';
             deleteBtn.style.border = 'none';
@@ -544,10 +557,10 @@
             deleteBtn.style.borderRadius = '4px';
             deleteBtn.style.cursor = 'pointer';
             deleteBtn.addEventListener('click', () => {
-              if (confirm('确定要删除此项吗？')) {
+              if (confirm('Are you sure you want to delete this item?')) {
                 db.ref(`inventory/${userId}/${item.id}`).remove()
                   .catch((error) => {
-                    alert('删除失败：' + error.message);
+                    alert('Failed to delete item: ' + error.message);
                   });
               }
             });
@@ -558,12 +571,12 @@
           });
           inventoryMessage.textContent = '';
         } else {
-          inventoryMessage.textContent = '暂无库存数据';
+          inventoryMessage.textContent = 'No inventory data available';
         }
       });
     }
 
-    // 打开编辑模态框
+    // Open Edit Modal
     function openEditModal(item) {
       currentEditItemId = item.id;
       editItemNameInput.value = item.name;
@@ -575,7 +588,7 @@
       editModal.style.display = 'block';
     }
 
-    // 关闭编辑模态框
+    // Close Edit Modal
     closeModalSpan.onclick = function() {
       editModal.style.display = 'none';
     }
@@ -586,46 +599,47 @@
       }
     }
 
-    // 保存编辑后的库存项
+    // Save Edited Inventory Item
     saveEditButton.addEventListener('click', () => {
       const name = editItemNameInput.value.trim();
       const quantity = editItemQuantityInput.value.trim();
       const unit = editItemUnitInput.value.trim();
-      const expiredDate = editItemExpiredDateInput.value; // 可选
+      const expiredDate = editItemExpiredDateInput.value; // Optional
       const location = editItemLocationInput.value.trim();
 
-      // 基本验证
+      // Basic Validation
       if (name === '' || quantity === '' || unit === '' || location === '') {
-        editItemError.textContent = '请填写所有必填字段';
+        editItemError.textContent = 'Please fill in all required fields';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        editItemError.textContent = '用户未认证';
+        editItemError.textContent = 'User not authenticated';
         return;
       }
 
-      // 准备更新的数据对象
+      // Prepare Updated Data Object
       const updatedData = {
         name,
         quantity: Number(quantity),
         unit,
         location,
-        modifiedTime: new Date().toLocaleString()
+        modifiedTime: new Date().toLocaleString(),
+        modifiedBy: user.displayName || 'Unknown'
       };
 
-      // 如果填写了过期日期，则添加到数据对象中
+      // If Expired Date is provided, add to data object
       if (expiredDate) {
         updatedData.expiredDate = expiredDate;
       } else {
-        updatedData.expiredDate = null; // 或者删除该字段
+        updatedData.expiredDate = null; // Or remove the field
       }
 
       const itemRef = db.ref(`inventory/${user.uid}/${currentEditItemId}`);
       itemRef.update(updatedData, (error) => {
         if (error) {
-          editItemError.textContent = '更新失败：' + error.message;
+          editItemError.textContent = 'Failed to update item: ' + error.message;
         } else {
           editItemError.textContent = '';
           editModal.style.display = 'none';
