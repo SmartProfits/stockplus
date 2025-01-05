@@ -15,364 +15,186 @@
   <style>
     /* 基本样式 */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #eef2f5;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      background-color: #f4f4f4;
     }
-
-    #auth-container, #app-container {
-      width: 90%;
-      max-width: 1000px;
-      padding: 2rem;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
+    
     header {
+      background-color: #1976d2;
+      color: white;
+      padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
     }
-
+    
     nav {
-      margin-bottom: 2rem;
+      background-color: #ffffff;
+      padding: 10px 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
+    
     .nav-menu {
       list-style: none;
+      margin: 0;
       padding: 0;
       display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
     }
-
-    .nav-menu li a {
+    
+    .nav-menu li {
+      margin-right: 20px;
+      position: relative;
+    }
+    
+    .nav-menu a {
       text-decoration: none;
       color: #1976d2;
       font-weight: bold;
-      padding: 0.5rem 1rem;
-      border: 1px solid #1976d2;
-      border-radius: 6px;
-      transition: background-color 0.3s, color 0.3s;
     }
-
-    .nav-menu li a:hover {
-      background-color: #1976d2;
-      color: white;
+    
+    .nav-menu a:hover {
+      color: #004ba0;
     }
-
-    h2, h3 {
-      color: #333333;
-      margin: 0;
+    
+    main {
+      padding: 20px;
     }
-
+    
+    section {
+      background-color: #ffffff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
     label {
       display: block;
-      margin-top: 1rem;
+      margin-bottom: 5px;
       font-weight: bold;
     }
-
-    input, select {
+    
+    input, select, button {
       width: 100%;
-      padding: 0.75rem;
-      margin: 0.625rem 0;
+      padding: 8px;
+      margin-bottom: 15px;
       border: 1px solid #cccccc;
-      border-radius: 6px;
+      border-radius: 4px;
       box-sizing: border-box;
-      transition: border-color 0.3s;
-      font-size: 1rem;
     }
-
-    input:focus, select:focus {
-      border-color: #1976d2;
-      outline: none;
-      box-shadow: 0 0 5px rgba(25, 118, 210, 0.5);
-    }
-
+    
     button {
-      width: 100%;
-      padding: 0.75rem;
       background-color: #1976d2;
       color: white;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s, transform 0.2s;
-      margin-top: 1rem;
     }
-
+    
     button:hover {
-      background-color: #1565c0;
-      transform: translateY(-2px);
+      background-color: #004ba0;
     }
-
+    
     .error-message {
-      color: #d32f2f;
-      margin-top: 0.5rem;
-      font-size: 0.875rem;
+      color: red;
+      font-size: 0.9em;
     }
-
-    /* 响应式表格容器 */
-    .table-responsive {
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+    
+    /* 加载指示器样式 */
+    #loading-indicator {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+      z-index: 1000;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-
-    th, td {
-      padding: 0.875rem;
-      border: 1px solid #dddddd;
-      text-align: left;
-      word-wrap: break-word;
-      font-size: 0.875rem;
-    }
-
-    th {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    a {
-      color: #1976d2;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    #logout-button {
-      width: auto;
-      padding: 0.5rem 1rem;
-      background-color: #d32f2f;
-      margin: 0;
-      border-radius: 6px;
-      transition: background-color 0.3s, transform 0.2s;
-      font-size: 0.875rem;
-    }
-
-    #logout-button:hover {
-      background-color: #c62828;
-      transform: translateY(-2px);
-    }
-
-    #add-item-section, #inventory-list-section, #stock-in-section, #stock-out-packaged-section, #stock-out-seafood-section {
-      margin-top: 2rem;
-    }
-
-    /* 库存卡片容器 */
-    .cards-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    /* 单个库存卡片 */
-    .inventory-card {
-      background-color: #f9f9f9;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    /* 响应式设计 */
-    @media (max-width: 600px) {
-      #auth-container, #app-container {
-        padding: 1.5rem;
-      }
-
-      th, td {
-        padding: 0.625rem;
-      }
-
-      button {
-        font-size: 0.875rem;
-      }
-
-      #logout-button {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.75rem;
-      }
-
-      /* 隐藏部分列在小屏幕 */
-      #inventory-table th:nth-child(5),
-      #inventory-table th:nth-child(7),
-      #inventory-table th:nth-child(8),
-      #inventory-table td:nth-child(5),
-      #inventory-table td:nth-child(7),
-      #inventory-table td:nth-child(8) {
-        display: none;
-      }
-
-      /* 显示卡片布局 */
-      #inventory-cards {
-        display: flex;
-      }
-
-      #inventory-table {
-        display: none;
-      }
-    }
-
-    @media (min-width: 601px) {
-      /* 大屏幕显示表格，隐藏卡片 */
-      #inventory-table {
-        display: table;
-      }
-
-      #inventory-cards {
-        display: none;
-      }
-    }
-
+    
     /* 模态框样式 */
     .modal {
-      display: none; 
-      position: fixed; 
-      z-index: 1; 
+      display: none;
+      position: fixed;
+      z-index: 1001;
       left: 0;
       top: 0;
-      width: 100%; 
-      height: 100%; 
-      overflow: auto; 
-      background-color: rgba(0,0,0,0.4); 
-      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
     }
-
+    
     .modal-content {
       background-color: #fefefe;
-      margin: 10% auto; 
-      padding: 1.25rem;
+      margin: 10% auto;
+      padding: 20px;
       border: 1px solid #888;
-      width: 90%; 
+      width: 80%;
       max-width: 500px;
       border-radius: 8px;
+      position: relative;
     }
-
+    
     .close {
       color: #aaa;
-      float: right;
-      font-size: 1.75rem;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
       font-weight: bold;
       cursor: pointer;
     }
-
+    
     .close:hover,
     .close:focus {
       color: black;
       text-decoration: none;
     }
-
-    /* 复选框样式 */
-    .checkbox-container {
-      display: flex;
-      align-items: center;
-      margin: 0.625rem 0;
+    
+    /* 表格样式 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
-
-    .checkbox-container input {
-      width: auto;
-      margin-right: 0.625rem;
+    
+    table, th, td {
+      border: 1px solid #dddddd;
     }
-
-    /* 库存卡片样式 */
-    .inventory-card h4 {
-      margin: 0 0 0.625rem 0;
-      color: #1976d2;
-      font-size: 1.25rem;
+    
+    th, td {
+      padding: 12px;
+      text-align: left;
     }
-
-    .inventory-card p {
-      margin: 0.3125rem 0;
-      font-size: 0.875rem;
-    }
-
-    /* 库存卡片按钮样式 */
-    .inventory-card .card-actions button {
+    
+    th {
       background-color: #1976d2;
       color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
     }
-
-    .inventory-card .card-actions button:hover {
-      background-color: #1565c0;
-      transform: translateY(-2px);
+    
+    .hide-on-mobile {
+      display: table-cell;
     }
-
-    /* 按钮图标样式 */
-    button i {
-      pointer-events: none;
+    
+    @media (max-width: 600px) {
+      .hide-on-mobile {
+        display: none;
+      }
+      
+      .cards-container {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .inventory-card {
+        border: 1px solid #dddddd;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        background-color: #fafafa;
+      }
     }
-
-    /* 工具提示样式 */
-    button[title] {
-      position: relative;
-    }
-
-    button[title]:hover::after {
-      content: attr(title);
-      position: absolute;
-      bottom: 125%; 
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #333;
-      color: #fff;
-      padding: 0.3125rem 0.5rem;
-      border-radius: 4px;
-      white-space: nowrap;
-      font-size: 0.75rem;
-      opacity: 1;
-      visibility: visible;
-    }
-
-    button[title]::after {
-      content: '';
-      position: absolute;
-      bottom: 120%;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 5px;
-      border-style: solid;
-      border-color: #333 transparent transparent transparent;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s;
-    }
-
-    /* 加载指示器样式 */
-    #loading-indicator {
-      display: none; 
-      position: fixed; 
-      top: 50%; 
-      left: 50%; 
-      transform: translate(-50%, -50%);
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 2rem;
-      border-radius: 10px;
-      z-index: 1000;
-    }
+    
+    /* 下拉菜单样式已在头部定义 */
   </style>
 </head>
 <body>
@@ -383,44 +205,41 @@
 
   <!-- 用户认证容器 -->
   <div id="auth-container">
-    <h2>仓库管理系统</h2>
-    <div id="auth-forms">
-      <!-- 登录表单 -->
-      <div id="login-form">
-        <h3>登录</h3>
-        <label for="login-email">邮箱</label>
-        <input type="email" id="login-email" placeholder="Email" required>
-        
-        <label for="login-password">密码</label>
-        <input type="password" id="login-password" placeholder="Password" required>
-        
-        <!-- 记住我复选框 -->
-        <div class="checkbox-container">
-          <input type="checkbox" id="remember-me">
-          <label for="remember-me">记住我</label>
-        </div>
-        
-        <button id="login-button">登录</button>
-        <p>还没有账号？ <a href="#" id="show-register">注册</a></p>
-        <p id="login-error" class="error-message"></p>
+    <!-- 登录表单 -->
+    <div id="login-form">
+      <h3>登录</h3>
+      <label for="login-email">邮箱</label>
+      <input type="email" id="login-email" placeholder="Email" required>
+      
+      <label for="login-password">密码</label>
+      <input type="password" id="login-password" placeholder="Password" required>
+      
+      <!-- 记住我复选框 -->
+      <div class="checkbox-container">
+        <input type="checkbox" id="remember-me">
+        <label for="remember-me">记住我</label>
       </div>
       
-      <!-- 注册表单 -->
-      <div id="register-form" style="display: none;">
-        <h3>注册</h3>
-        <label for="register-name">姓名</label>
-        <input type="text" id="register-name" placeholder="Name" required>
-        
-        <label for="register-email">邮箱</label>
-        <input type="email" id="register-email" placeholder="Email" required>
-        
-        <label for="register-password">密码</label>
-        <input type="password" id="register-password" placeholder="Password" required>
-        
-        <button id="register-button">注册</button>
-        <p>已有账号？ <a href="#" id="show-login">登录</a></p>
-        <p id="register-error" class="error-message"></p>
-      </div>
+      <button id="login-button">登录</button>
+      <p>还没有账号？ <a href="#" id="show-register">注册</a></p>
+      <p id="login-error" class="error-message"></p>
+    </div>
+    
+    <!-- 注册表单 -->
+    <div id="register-form" style="display: none;">
+      <h3>注册</h3>
+      <label for="register-name">姓名</label>
+      <input type="text" id="register-name" placeholder="Name" required>
+      
+      <label for="register-email">邮箱</label>
+      <input type="email" id="register-email" placeholder="Email" required>
+      
+      <label for="register-password">密码</label>
+      <input type="password" id="register-password" placeholder="Password" required>
+      
+      <button id="register-button">注册</button>
+      <p>已有账号？ <a href="#" id="show-login">登录</a></p>
+      <p id="register-error" class="error-message"></p>
     </div>
   </div>
 
@@ -434,9 +253,23 @@
     <nav>
       <ul class="nav-menu">
         <li><a href="#" id="nav-inventory">库存列表</a></li>
-        <li><a href="#" id="nav-stock-in">进货</a></li>
-        <li><a href="#" id="nav-stock-out-packaged">出货 - Packaged Food</a></li>
-        <li><a href="#" id="nav-stock-out-seafood">出货 - Seafood</a></li>
+        <!-- 进货下拉菜单 -->
+        <li class="dropdown">
+          <a href="#">进货</a>
+          <div class="dropdown-content">
+            <a href="#" id="nav-stock-in-office">Office</a>
+            <a href="#" id="nav-stock-in-kepayan">Kepayan</a>
+          </div>
+        </li>
+        <!-- 出货下拉菜单 -->
+        <li class="dropdown">
+          <a href="#">出货</a>
+          <div class="dropdown-content">
+            <a href="#" id="nav-stock-out-office">Office</a>
+            <a href="#" id="nav-stock-out-kepayan-seafood">Kepayan - Seafood</a>
+            <a href="#" id="nav-stock-out-kepayan-packaged">Kepayan - Packaged Food</a>
+          </div>
+        </li>
       </ul>
     </nav>
     
@@ -471,83 +304,129 @@
         <p id="inventory-message"></p>
       </section>
       
-      <!-- 进货部分 -->
-      <section id="stock-in-section" style="display: none;">
-        <h3>进货</h3>
-        <label for="stock-in-name">产品名称</label>
-        <input type="text" id="stock-in-name" placeholder="Product Name" required>
+      <!-- 进货部分 - Office -->
+      <section id="stock-in-office-section" style="display: none;">
+        <h3>进货 - Office</h3>
+        <label for="stock-in-office-name">产品名称</label>
+        <input type="text" id="stock-in-office-name" placeholder="Product Name" required>
         
-        <label for="stock-in-category">类别</label>
-        <select id="stock-in-category" required>
+        <label for="stock-in-office-category">类别</label>
+        <select id="stock-in-office-category" required>
           <option value="">选择类别</option>
           <option value="Packaged Food">Packaged Food</option>
           <option value="Seafood">Seafood</option>
         </select>
         
-        <label for="stock-in-quantity">数量</label>
-        <input type="number" id="stock-in-quantity" placeholder="Quantity" required>
+        <label for="stock-in-office-quantity">数量</label>
+        <input type="number" id="stock-in-office-quantity" placeholder="Quantity" required>
         
-        <label for="stock-in-unit">单位</label>
-        <input type="text" id="stock-in-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
+        <label for="stock-in-office-unit">单位</label>
+        <input type="text" id="stock-in-office-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
         
-        <label for="stock-in-expired-date">过期日期 (可选)</label>
-        <input type="date" id="stock-in-expired-date" placeholder="Expired Date (Optional)">
+        <label for="stock-in-office-expired-date">过期日期 (可选)</label>
+        <input type="date" id="stock-in-office-expired-date" placeholder="Expired Date (Optional)">
         
-        <label for="stock-in-location">位置</label>
-        <select id="stock-in-location" required>
-          <option value="">选择地点</option>
+        <label for="stock-in-office-location">位置</label>
+        <select id="stock-in-office-location" required>
           <option value="office">Office</option>
-          <option value="kepayan">Kepayan</option>
         </select>
         
-        <button id="stock-in-button">添加进货</button>
-        <p id="stock-in-error" class="error-message"></p>
+        <button id="stock-in-office-button">添加进货 - Office</button>
+        <p id="stock-in-office-error" class="error-message"></p>
       </section>
       
-      <!-- 出货部分 - Packaged Food -->
-      <section id="stock-out-packaged-section" style="display: none;">
-        <h3>出货 - Packaged Food</h3>
-        <label for="stock-out-packaged-name">产品名称</label>
-        <select id="stock-out-packaged-name" required>
-          <option value="">选择产品</option>
-          <!-- 动态填充 Packaged Food 产品 -->
+      <!-- 进货部分 - Kepayan -->
+      <section id="stock-in-kepayan-section" style="display: none;">
+        <h3>进货 - Kepayan</h3>
+        <label for="stock-in-kepayan-name">产品名称</label>
+        <input type="text" id="stock-in-kepayan-name" placeholder="Product Name" required>
+        
+        <label for="stock-in-kepayan-category">类别</label>
+        <select id="stock-in-kepayan-category" required>
+          <option value="">选择类别</option>
+          <option value="Packaged Food">Packaged Food</option>
+          <option value="Seafood">Seafood</option>
         </select>
         
-        <label for="stock-out-packaged-quantity">数量</label>
-        <input type="number" id="stock-out-packaged-quantity" placeholder="Quantity" required>
+        <label for="stock-in-kepayan-quantity">数量</label>
+        <input type="number" id="stock-in-kepayan-quantity" placeholder="Quantity" required>
         
-        <label for="stock-out-packaged-location">位置</label>
-        <select id="stock-out-packaged-location" required>
-          <option value="">选择地点</option>
-          <option value="office">Office</option>
+        <label for="stock-in-kepayan-unit">单位</label>
+        <input type="text" id="stock-in-kepayan-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
+        
+        <label for="stock-in-kepayan-expired-date">过期日期 (可选)</label>
+        <input type="date" id="stock-in-kepayan-expired-date" placeholder="Expired Date (Optional)">
+        
+        <label for="stock-in-kepayan-location">位置</label>
+        <select id="stock-in-kepayan-location" required>
           <option value="kepayan">Kepayan</option>
         </select>
         
-        <button id="stock-out-packaged-button">添加出货 - Packaged Food</button>
-        <p id="stock-out-packaged-error" class="error-message"></p>
+        <button id="stock-in-kepayan-button">添加进货 - Kepayan</button>
+        <p id="stock-in-kepayan-error" class="error-message"></p>
       </section>
       
-      <!-- 出货部分 - Seafood -->
-      <section id="stock-out-seafood-section" style="display: none;">
-        <h3>出货 - Seafood</h3>
-        <label for="stock-out-seafood-name">产品名称</label>
-        <select id="stock-out-seafood-name" required>
+      <!-- 出货部分 - Office -->
+      <section id="stock-out-office-section" style="display: none;">
+        <h3>出货 - Office</h3>
+        <label for="stock-out-office-name">产品名称</label>
+        <select id="stock-out-office-name" required>
           <option value="">选择产品</option>
-          <!-- 动态填充 Seafood 产品 -->
+          <!-- 动态填充 Office 产品 -->
         </select>
         
-        <label for="stock-out-seafood-quantity">数量</label>
-        <input type="number" id="stock-out-seafood-quantity" placeholder="Quantity" required>
+        <label for="stock-out-office-quantity">数量</label>
+        <input type="number" id="stock-out-office-quantity" placeholder="Quantity" required>
         
-        <label for="stock-out-seafood-location">位置</label>
-        <select id="stock-out-seafood-location" required>
-          <option value="">选择地点</option>
+        <label for="stock-out-office-location">位置</label>
+        <select id="stock-out-office-location" required>
           <option value="office">Office</option>
+        </select>
+        
+        <button id="stock-out-office-button">添加出货 - Office</button>
+        <p id="stock-out-office-error" class="error-message"></p>
+      </section>
+      
+      <!-- 出货部分 - Kepayan - Seafood -->
+      <section id="stock-out-kepayan-seafood-section" style="display: none;">
+        <h3>出货 - Kepayan - Seafood</h3>
+        <label for="stock-out-kepayan-seafood-name">产品名称</label>
+        <select id="stock-out-kepayan-seafood-name" required>
+          <option value="">选择产品</option>
+          <!-- 动态填充 Kepayan Seafood 产品 -->
+        </select>
+        
+        <label for="stock-out-kepayan-seafood-quantity">数量</label>
+        <input type="number" id="stock-out-kepayan-seafood-quantity" placeholder="Quantity" required>
+        
+        <label for="stock-out-kepayan-seafood-location">位置</label>
+        <select id="stock-out-kepayan-seafood-location" required>
           <option value="kepayan">Kepayan</option>
         </select>
         
-        <button id="stock-out-seafood-button">添加出货 - Seafood</button>
-        <p id="stock-out-seafood-error" class="error-message"></p>
+        <button id="stock-out-kepayan-seafood-button">添加出货 - Kepayan - Seafood</button>
+        <p id="stock-out-kepayan-seafood-error" class="error-message"></p>
+      </section>
+      
+      <!-- 出货部分 - Kepayan - Packaged Food -->
+      <section id="stock-out-kepayan-packaged-section" style="display: none;">
+        <h3>出货 - Kepayan - Packaged Food</h3>
+        <label for="stock-out-kepayan-packaged-name">产品名称</label>
+        <select id="stock-out-kepayan-packaged-name" required>
+          <option value="">选择产品</option>
+          <!-- 动态填充 Kepayan Packaged Food 产品 -->
+        </select>
+        
+        <label for="stock-out-kepayan-packaged-quantity">数量</label>
+        <input type="number" id="stock-out-kepayan-packaged-quantity" placeholder="Quantity" required>
+        
+        <label for="stock-out-kepayan-packaged-location">位置</label>
+        <select id="stock-out-kepayan-packaged-location" required>
+          <option value="kepayan">Kepayan</option>
+        </select>
+        
+        <button id="stock-out-kepayan-packaged-button">添加出货 - Kepayan - Packaged Food</button>
+        <p id="stock-out-kepayan-packaged-error" class="error-message"></p>
       </section>
     </main>
   </div>
@@ -621,36 +500,60 @@
     const appContainer = document.getElementById('app-container');
     const logoutButton = document.getElementById('logout-button');
     const navInventory = document.getElementById('nav-inventory');
-    const navStockIn = document.getElementById('nav-stock-in');
-    const navStockOutPackaged = document.getElementById('nav-stock-out-packaged');
-    const navStockOutSeafood = document.getElementById('nav-stock-out-seafood');
+    const navStockInOffice = document.getElementById('nav-stock-in-office');
+    const navStockInKepayan = document.getElementById('nav-stock-in-kepayan');
+    const navStockOutOffice = document.getElementById('nav-stock-out-office');
+    const navStockOutKepayanSeafood = document.getElementById('nav-stock-out-kepayan-seafood');
+    const navStockOutKepayanPackaged = document.getElementById('nav-stock-out-kepayan-packaged');
 
     const inventoryListSection = document.getElementById('inventory-list-section');
-    const stockInSection = document.getElementById('stock-in-section');
-    const stockOutPackagedSection = document.getElementById('stock-out-packaged-section');
-    const stockOutSeafoodSection = document.getElementById('stock-out-seafood-section');
+    const stockInOfficeSection = document.getElementById('stock-in-office-section');
+    const stockInKepayanSection = document.getElementById('stock-in-kepayan-section');
+    const stockOutOfficeSection = document.getElementById('stock-out-office-section');
+    const stockOutKepayanSeafoodSection = document.getElementById('stock-out-kepayan-seafood-section');
+    const stockOutKepayanPackagedSection = document.getElementById('stock-out-kepayan-packaged-section');
 
-    const stockInButton = document.getElementById('stock-in-button');
-    const stockOutPackagedButton = document.getElementById('stock-out-packaged-button');
-    const stockOutSeafoodButton = document.getElementById('stock-out-seafood-button');
+    // 进货按钮
+    const stockInOfficeButton = document.getElementById('stock-in-office-button');
+    const stockInKepayanButton = document.getElementById('stock-in-kepayan-button');
 
-    const stockInNameInput = document.getElementById('stock-in-name');
-    const stockInCategorySelect = document.getElementById('stock-in-category');
-    const stockInQuantityInput = document.getElementById('stock-in-quantity');
-    const stockInUnitInput = document.getElementById('stock-in-unit');
-    const stockInExpiredDateInput = document.getElementById('stock-in-expired-date');
-    const stockInLocationSelect = document.getElementById('stock-in-location');
-    const stockInError = document.getElementById('stock-in-error');
+    // 出货按钮
+    const stockOutOfficeButton = document.getElementById('stock-out-office-button');
+    const stockOutKepayanSeafoodButton = document.getElementById('stock-out-kepayan-seafood-button');
+    const stockOutKepayanPackagedButton = document.getElementById('stock-out-kepayan-packaged-button');
 
-    const stockOutPackagedNameSelect = document.getElementById('stock-out-packaged-name');
-    const stockOutPackagedQuantityInput = document.getElementById('stock-out-packaged-quantity');
-    const stockOutPackagedLocationSelect = document.getElementById('stock-out-packaged-location');
-    const stockOutPackagedError = document.getElementById('stock-out-packaged-error');
+    // 进货输入字段
+    const stockInOfficeNameInput = document.getElementById('stock-in-office-name');
+    const stockInOfficeCategorySelect = document.getElementById('stock-in-office-category');
+    const stockInOfficeQuantityInput = document.getElementById('stock-in-office-quantity');
+    const stockInOfficeUnitInput = document.getElementById('stock-in-office-unit');
+    const stockInOfficeExpiredDateInput = document.getElementById('stock-in-office-expired-date');
+    const stockInOfficeLocationSelect = document.getElementById('stock-in-office-location');
+    const stockInOfficeError = document.getElementById('stock-in-office-error');
 
-    const stockOutSeafoodNameSelect = document.getElementById('stock-out-seafood-name');
-    const stockOutSeafoodQuantityInput = document.getElementById('stock-out-seafood-quantity');
-    const stockOutSeafoodLocationSelect = document.getElementById('stock-out-seafood-location');
-    const stockOutSeafoodError = document.getElementById('stock-out-seafood-error');
+    const stockInKepayanNameInput = document.getElementById('stock-in-kepayan-name');
+    const stockInKepayanCategorySelect = document.getElementById('stock-in-kepayan-category');
+    const stockInKepayanQuantityInput = document.getElementById('stock-in-kepayan-quantity');
+    const stockInKepayanUnitInput = document.getElementById('stock-in-kepayan-unit');
+    const stockInKepayanExpiredDateInput = document.getElementById('stock-in-kepayan-expired-date');
+    const stockInKepayanLocationSelect = document.getElementById('stock-in-kepayan-location');
+    const stockInKepayanError = document.getElementById('stock-in-kepayan-error');
+
+    // 出货输入字段
+    const stockOutOfficeNameSelect = document.getElementById('stock-out-office-name');
+    const stockOutOfficeQuantityInput = document.getElementById('stock-out-office-quantity');
+    const stockOutOfficeLocationSelect = document.getElementById('stock-out-office-location');
+    const stockOutOfficeError = document.getElementById('stock-out-office-error');
+
+    const stockOutKepayanSeafoodNameSelect = document.getElementById('stock-out-kepayan-seafood-name');
+    const stockOutKepayanSeafoodQuantityInput = document.getElementById('stock-out-kepayan-seafood-quantity');
+    const stockOutKepayanSeafoodLocationSelect = document.getElementById('stock-out-kepayan-seafood-location');
+    const stockOutKepayanSeafoodError = document.getElementById('stock-out-kepayan-seafood-error');
+
+    const stockOutKepayanPackagedNameSelect = document.getElementById('stock-out-kepayan-packaged-name');
+    const stockOutKepayanPackagedQuantityInput = document.getElementById('stock-out-kepayan-packaged-quantity');
+    const stockOutKepayanPackagedLocationSelect = document.getElementById('stock-out-kepayan-packaged-location');
+    const stockOutKepayanPackagedError = document.getElementById('stock-out-kepayan-packaged-error');
 
     const inventoryTableBody = document.querySelector('#inventory-table tbody');
     const inventoryMessage = document.getElementById('inventory-message');
@@ -679,7 +582,6 @@
       registerForm.style.display = 'block';
     });
 
-    // 显示/隐藏登录表单
     showLoginLink.addEventListener('click', (e) => {
       e.preventDefault();
       registerForm.style.display = 'none';
@@ -804,15 +706,18 @@
         // 无需隐藏任何导航项
       } else if (userRole === 'adminv') {
         // adminv: 只能查看库存，隐藏进货和出货功能
-        document.getElementById('nav-stock-in').style.display = 'none';
-        document.getElementById('nav-stock-out-packaged').style.display = 'none';
-        document.getElementById('nav-stock-out-seafood').style.display = 'none';
+        document.querySelectorAll('.nav-menu .dropdown').forEach(dropdown => {
+          dropdown.style.display = 'none';
+        });
       } else if (userRole === 'admino') {
         // admino: 只能管理 office
-        document.getElementById('nav-stock-out-seafood').style.display = 'none';
+        document.getElementById('nav-stock-in-kepayan').style.display = 'none';
+        document.getElementById('nav-stock-out-kepayan-seafood').style.display = 'none';
+        document.getElementById('nav-stock-out-kepayan-packaged').style.display = 'none';
       } else if (userRole === 'admink') {
         // admink: 只能管理 kepayan
-        document.getElementById('nav-stock-out-packaged').style.display = 'none';
+        document.getElementById('nav-stock-in-office').style.display = 'none';
+        document.getElementById('nav-stock-out-office').style.display = 'none';
       }
     }
 
@@ -833,35 +738,30 @@
       }
     });
 
-    // 添加进货功能
-    stockInButton.addEventListener('click', () => {
-      const name = stockInNameInput.value.trim();
-      const category = stockInCategorySelect.value;
-      const quantity = stockInQuantityInput.value.trim();
-      const unit = stockInUnitInput.value.trim();
-      const expiredDate = stockInExpiredDateInput.value; // 可选
-      const location = stockInLocationSelect.value;
+    // 添加进货功能 - Office
+    stockInOfficeButton.addEventListener('click', () => {
+      const name = stockInOfficeNameInput.value.trim();
+      const category = stockInOfficeCategorySelect.value;
+      const quantity = stockInOfficeQuantityInput.value.trim();
+      const unit = stockInOfficeUnitInput.value.trim();
+      const expiredDate = stockInOfficeExpiredDateInput.value; // 可选
+      const location = stockInOfficeLocationSelect.value;
 
       // 基本验证
       if (name === '' || category === '' || quantity === '' || unit === '' || location === '') {
-        stockInError.textContent = '请填写所有必填字段';
+        stockInOfficeError.textContent = '请填写所有必填字段';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        stockInError.textContent = '用户未认证';
+        stockInOfficeError.textContent = '用户未认证';
         return;
       }
 
       // 根据角色限制可选地点
       if (userRole === 'admino' && location !== 'office') {
-        stockInError.textContent = '您只能管理Office地点的库存';
-        return;
-      }
-
-      if (userRole === 'admink' && location !== 'kepayan') {
-        stockInError.textContent = '您只能管理Kepayan地点的库存';
+        stockInOfficeError.textContent = '您只能管理Office地点的库存';
         return;
       }
 
@@ -888,46 +788,105 @@
       const newItemRef = inventoryRef.push();
       newItemRef.set(itemData, (error) => {
         if (error) {
-          stockInError.textContent = '添加进货项失败: ' + error.message;
+          stockInOfficeError.textContent = '添加进货项失败: ' + error.message;
         } else {
-          stockInError.textContent = '';
-          stockInNameInput.value = '';
-          stockInCategorySelect.value = '';
-          stockInQuantityInput.value = '';
-          stockInUnitInput.value = '';
-          stockInExpiredDateInput.value = '';
-          stockInLocationSelect.value = '';
+          stockInOfficeError.textContent = '';
+          stockInOfficeNameInput.value = '';
+          stockInOfficeCategorySelect.value = '';
+          stockInOfficeQuantityInput.value = '';
+          stockInOfficeUnitInput.value = '';
+          stockInOfficeExpiredDateInput.value = '';
+          stockInOfficeLocationSelect.value = 'office';
         }
         hideLoading();
       });
     });
 
-    // 添加出货功能 - Packaged Food
-    stockOutPackagedButton.addEventListener('click', () => {
-      const name = stockOutPackagedNameSelect.value;
-      let quantity = parseInt(stockOutPackagedQuantityInput.value.trim(), 10);
-      const location = stockOutPackagedLocationSelect.value;
+    // 添加进货功能 - Kepayan
+    stockInKepayanButton.addEventListener('click', () => {
+      const name = stockInKepayanNameInput.value.trim();
+      const category = stockInKepayanCategorySelect.value;
+      const quantity = stockInKepayanQuantityInput.value.trim();
+      const unit = stockInKepayanUnitInput.value.trim();
+      const expiredDate = stockInKepayanExpiredDateInput.value; // 可选
+      const location = stockInKepayanLocationSelect.value;
 
       // 基本验证
-      if (name === '' || isNaN(quantity) || quantity <= 0 || location === '') {
-        stockOutPackagedError.textContent = '请填写所有必填字段，且数量必须大于0';
+      if (name === '' || category === '' || quantity === '' || unit === '' || location === '') {
+        stockInKepayanError.textContent = '请填写所有必填字段';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        stockOutPackagedError.textContent = '用户未认证';
+        stockInKepayanError.textContent = '用户未认证';
+        return;
+      }
+
+      // 根据角色限制可选地点
+      if (userRole === 'admink' && location !== 'kepayan') {
+        stockInKepayanError.textContent = '您只能管理Kepayan地点的库存';
+        return;
+      }
+
+      showLoading();
+
+      // 准备数据对象
+      const itemData = {
+        name,
+        category,
+        quantity: Number(quantity),
+        unit,
+        location,
+        createdTime: new Date().toLocaleString(),
+        modifiedTime: new Date().toLocaleString(),
+        modifiedBy: user.displayName || '未知'
+      };
+
+      // 如果提供了过期日期，则添加到数据对象
+      if (expiredDate) {
+        itemData.expiredDate = expiredDate;
+      }
+
+      const inventoryRef = db.ref('inventory/' + user.uid);
+      const newItemRef = inventoryRef.push();
+      newItemRef.set(itemData, (error) => {
+        if (error) {
+          stockInKepayanError.textContent = '添加进货项失败: ' + error.message;
+        } else {
+          stockInKepayanError.textContent = '';
+          stockInKepayanNameInput.value = '';
+          stockInKepayanCategorySelect.value = '';
+          stockInKepayanQuantityInput.value = '';
+          stockInKepayanUnitInput.value = '';
+          stockInKepayanExpiredDateInput.value = '';
+          stockInKepayanLocationSelect.value = 'kepayan';
+        }
+        hideLoading();
+      });
+    });
+
+    // 添加出货功能 - Office
+    stockOutOfficeButton.addEventListener('click', () => {
+      const name = stockOutOfficeNameSelect.value;
+      let quantity = parseInt(stockOutOfficeQuantityInput.value.trim(), 10);
+      const location = stockOutOfficeLocationSelect.value;
+
+      // 基本验证
+      if (name === '' || isNaN(quantity) || quantity <= 0 || location === '') {
+        stockOutOfficeError.textContent = '请填写所有必填字段，且数量必须大于0';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        stockOutOfficeError.textContent = '用户未认证';
         return;
       }
 
       // 根据角色限制可选地点
       if (userRole === 'admino' && location !== 'office') {
-        stockOutPackagedError.textContent = '您只能管理Office地点的库存';
-        return;
-      }
-
-      if (userRole === 'admink' && location !== 'kepayan') {
-        stockOutPackagedError.textContent = '您只能管理Kepayan地点的库存';
+        stockOutOfficeError.textContent = '您只能管理Office地点的库存';
         return;
       }
 
@@ -942,7 +901,11 @@
           }
 
           const items = Object.keys(data)
-            .filter(key => data[key].category === 'Packaged Food' && data[key].location === location)
+            .filter(key => {
+              const categoryCheck = data[key].category === 'Packaged Food' || data[key].category === 'Seafood';
+              const locationCheck = data[key].location === location;
+              return categoryCheck && locationCheck;
+            })
             .map(key => ({ id: key, ...data[key] }));
 
           if (items.length === 0) {
@@ -977,46 +940,41 @@
           return inventoryRef.update(updates);
         })
         .then(() => {
-          stockOutPackagedError.textContent = '';
-          stockOutPackagedNameSelect.value = '';
-          stockOutPackagedQuantityInput.value = '';
-          stockOutPackagedLocationSelect.value = '';
+          stockOutOfficeError.textContent = '';
+          stockOutOfficeNameSelect.value = '';
+          stockOutOfficeQuantityInput.value = '';
+          stockOutOfficeLocationSelect.value = 'office';
         })
         .catch((error) => {
           console.error('出货错误:', error);
-          stockOutPackagedError.textContent = '出货失败: ' + error.message;
+          stockOutOfficeError.textContent = '出货失败: ' + error.message;
         })
         .finally(() => {
           hideLoading();
         });
     });
 
-    // 添加出货功能 - Seafood
-    stockOutSeafoodButton.addEventListener('click', () => {
-      const name = stockOutSeafoodNameSelect.value;
-      let quantity = parseInt(stockOutSeafoodQuantityInput.value.trim(), 10);
-      const location = stockOutSeafoodLocationSelect.value;
+    // 添加出货功能 - Kepayan - Seafood
+    stockOutKepayanSeafoodButton.addEventListener('click', () => {
+      const name = stockOutKepayanSeafoodNameSelect.value;
+      let quantity = parseInt(stockOutKepayanSeafoodQuantityInput.value.trim(), 10);
+      const location = stockOutKepayanSeafoodLocationSelect.value;
 
       // 基本验证
       if (name === '' || isNaN(quantity) || quantity <= 0 || location === '') {
-        stockOutSeafoodError.textContent = '请填写所有必填字段，且数量必须大于0';
+        stockOutKepayanSeafoodError.textContent = '请填写所有必填字段，且数量必须大于0';
         return;
       }
 
       const user = auth.currentUser;
       if (!user) {
-        stockOutSeafoodError.textContent = '用户未认证';
+        stockOutKepayanSeafoodError.textContent = '用户未认证';
         return;
       }
 
       // 根据角色限制可选地点
-      if (userRole === 'admino' && location !== 'office') {
-        stockOutSeafoodError.textContent = '您只能管理Office地点的库存';
-        return;
-      }
-
       if (userRole === 'admink' && location !== 'kepayan') {
-        stockOutSeafoodError.textContent = '您只能管理Kepayan地点的库存';
+        stockOutKepayanSeafoodError.textContent = '您只能管理Kepayan地点的库存';
         return;
       }
 
@@ -1066,14 +1024,98 @@
           return inventoryRef.update(updates);
         })
         .then(() => {
-          stockOutSeafoodError.textContent = '';
-          stockOutSeafoodNameSelect.value = '';
-          stockOutSeafoodQuantityInput.value = '';
-          stockOutSeafoodLocationSelect.value = '';
+          stockOutKepayanSeafoodError.textContent = '';
+          stockOutKepayanSeafoodNameSelect.value = '';
+          stockOutKepayanSeafoodQuantityInput.value = '';
+          stockOutKepayanSeafoodLocationSelect.value = 'kepayan';
         })
         .catch((error) => {
           console.error('出货错误:', error);
-          stockOutSeafoodError.textContent = '出货失败: ' + error.message;
+          stockOutKepayanSeafoodError.textContent = '出货失败: ' + error.message;
+        })
+        .finally(() => {
+          hideLoading();
+        });
+    });
+
+    // 添加出货功能 - Kepayan - Packaged Food
+    stockOutKepayanPackagedButton.addEventListener('click', () => {
+      const name = stockOutKepayanPackagedNameSelect.value;
+      let quantity = parseInt(stockOutKepayanPackagedQuantityInput.value.trim(), 10);
+      const location = stockOutKepayanPackagedLocationSelect.value;
+
+      // 基本验证
+      if (name === '' || isNaN(quantity) || quantity <= 0 || location === '') {
+        stockOutKepayanPackagedError.textContent = '请填写所有必填字段，且数量必须大于0';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        stockOutKepayanPackagedError.textContent = '用户未认证';
+        return;
+      }
+
+      // 根据角色限制可选地点
+      if (userRole === 'admink' && location !== 'kepayan') {
+        stockOutKepayanPackagedError.textContent = '您只能管理Kepayan地点的库存';
+        return;
+      }
+
+      showLoading();
+
+      const inventoryRef = db.ref('inventory/' + user.uid);
+      inventoryRef.orderByChild('name').equalTo(name).once('value')
+        .then((snapshot) => {
+          const data = snapshot.val();
+          if (!data) {
+            throw new Error('未找到对应的产品');
+          }
+
+          const items = Object.keys(data)
+            .filter(key => data[key].category === 'Packaged Food' && data[key].location === location)
+            .map(key => ({ id: key, ...data[key] }));
+
+          if (items.length === 0) {
+            throw new Error('未找到对应类别和地点的产品');
+          }
+
+          // 按照创建时间排序，最早的先处理
+          items.sort((a, b) => new Date(a.createdTime) - new Date(b.createdTime));
+
+          let updates = {};
+          let remaining = quantity;
+
+          for (let item of items) {
+            if (remaining <= 0) break;
+            if (item.quantity >= remaining) {
+              updates[`/${item.id}/quantity`] = item.quantity - remaining;
+              updates[`/${item.id}/modifiedTime`] = new Date().toLocaleString();
+              updates[`/${item.id}/modifiedBy`] = user.displayName || '未知';
+              remaining = 0;
+            } else if (item.quantity > 0) {
+              updates[`/${item.id}/quantity`] = 0;
+              updates[`/${item.id}/modifiedTime`] = new Date().toLocaleString();
+              updates[`/${item.id}/modifiedBy`] = user.displayName || '未知';
+              remaining -= item.quantity;
+            }
+          }
+
+          if (remaining > 0) {
+            throw new Error('库存不足');
+          }
+
+          return inventoryRef.update(updates);
+        })
+        .then(() => {
+          stockOutKepayanPackagedError.textContent = '';
+          stockOutKepayanPackagedNameSelect.value = '';
+          stockOutKepayanPackagedQuantityInput.value = '';
+          stockOutKepayanPackagedLocationSelect.value = 'kepayan';
+        })
+        .catch((error) => {
+          console.error('出货错误:', error);
+          stockOutKepayanPackagedError.textContent = '出货失败: ' + error.message;
         })
         .finally(() => {
           hideLoading();
@@ -1256,22 +1298,30 @@
     // 显示指定的页面部分，并隐藏其他部分
     function showSection(section) {
       inventoryListSection.style.display = 'none';
-      stockInSection.style.display = 'none';
-      stockOutPackagedSection.style.display = 'none';
-      stockOutSeafoodSection.style.display = 'none';
+      stockInOfficeSection.style.display = 'none';
+      stockInKepayanSection.style.display = 'none';
+      stockOutOfficeSection.style.display = 'none';
+      stockOutKepayanSeafoodSection.style.display = 'none';
+      stockOutKepayanPackagedSection.style.display = 'none';
       
       switch(section) {
         case 'inventory':
           inventoryListSection.style.display = 'block';
           break;
-        case 'stock-in':
-          stockInSection.style.display = 'block';
+        case 'stock-in-office':
+          stockInOfficeSection.style.display = 'block';
           break;
-        case 'stock-out-packaged':
-          stockOutPackagedSection.style.display = 'block';
+        case 'stock-in-kepayan':
+          stockInKepayanSection.style.display = 'block';
           break;
-        case 'stock-out-seafood':
-          stockOutSeafoodSection.style.display = 'block';
+        case 'stock-out-office':
+          stockOutOfficeSection.style.display = 'block';
+          break;
+        case 'stock-out-kepayan-seafood':
+          stockOutKepayanSeafoodSection.style.display = 'block';
+          break;
+        case 'stock-out-kepayan-packaged':
+          stockOutKepayanPackagedSection.style.display = 'block';
           break;
         default:
           inventoryListSection.style.display = 'block';
@@ -1284,19 +1334,29 @@
       showSection('inventory');
     });
 
-    navStockIn.addEventListener('click', (e) => {
+    navStockInOffice.addEventListener('click', (e) => {
       e.preventDefault();
-      showSection('stock-in');
+      showSection('stock-in-office');
     });
 
-    navStockOutPackaged.addEventListener('click', (e) => {
+    navStockInKepayan.addEventListener('click', (e) => {
       e.preventDefault();
-      showSection('stock-out-packaged');
+      showSection('stock-in-kepayan');
     });
 
-    navStockOutSeafood.addEventListener('click', (e) => {
+    navStockOutOffice.addEventListener('click', (e) => {
       e.preventDefault();
-      showSection('stock-out-seafood');
+      showSection('stock-out-office');
+    });
+
+    navStockOutKepayanSeafood.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('stock-out-kepayan-seafood');
+    });
+
+    navStockOutKepayanPackaged.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('stock-out-kepayan-packaged');
     });
 
     // 填充出货页面的产品选项
@@ -1304,32 +1364,28 @@
       const inventoryRef = db.ref('inventory/' + userId);
       inventoryRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        populateSelectOptions(stockOutPackagedNameSelect, data, 'Packaged Food', userRole);
-        populateSelectOptions(stockOutSeafoodNameSelect, data, 'Seafood', userRole);
+        populateSelectOptions(stockOutOfficeNameSelect, data, null, userRole, 'office');
+        populateSelectOptions(stockOutKepayanSeafoodNameSelect, data, 'Seafood', userRole, 'kepayan');
+        populateSelectOptions(stockOutKepayanPackagedNameSelect, data, 'Packaged Food', userRole, 'kepayan');
       });
     }
 
     // 辅助函数：填充<select>选项
-    function populateSelectOptions(selectElement, data, category, role) {
+    function populateSelectOptions(selectElement, data, category, role, locationFilter) {
       // 清空现有选项，保留第一个“选择产品”选项
       selectElement.innerHTML = '<option value="">选择产品</option>';
       
       if (data) {
         let items = Object.keys(data)
-          .filter(key => data[key].category === category && data[key].quantity > 0);
-
-        // 根据角色过滤地点
-        if (role === 'admino') {
-          items = items.filter(key => data[key].location === 'office');
-        } else if (role === 'admink') {
-          items = items.filter(key => data[key].location === 'kepayan');
-        }
-        // admin 和 adminv 可以看到所有
-
-        const productNames = items.map(key => data[key].name);
+          .filter(key => {
+            if (category && data[key].category !== category) return false;
+            if (locationFilter && data[key].location !== locationFilter) return false;
+            return data[key].quantity > 0;
+          })
+          .map(key => data[key].name);
 
         // 移除重复的产品名称
-        const uniqueItems = [...new Set(productNames)];
+        const uniqueItems = [...new Set(items)];
 
         uniqueItems.forEach(name => {
           const option = document.createElement('option');
