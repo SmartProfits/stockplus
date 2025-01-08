@@ -317,8 +317,8 @@
           <table id="inventory-table">
             <thead>
               <tr>
-                <th>类型</th>
-                <th>产品名称</th>
+                
+               <th>产品名称</th>
                 <th>类别</th>
                 <th>数量</th>
                 <th>单位</th>
@@ -433,7 +433,7 @@
           <table id="transaction-records-table">
             <thead>
               <tr>
-                <th>类型</th>
+                
                 <th>产品名称</th>
                 <th>类别</th>
                 <th>数量</th>
@@ -624,8 +624,8 @@
     // 获取库存路径，根据用户角色动态设置
     function getInventoryPaths() {
       let paths = [];
-      if (userRole === 'admin') {
-        paths = ['inventory'];
+      if (userRole === 'admin' || userRole === 'adminv') {
+        paths = ['inventory/office', 'inventory/kepayan'];
       } else if (userRole === 'admino') {
         paths = ['inventory/office'];
       } else if (userRole === 'admink') {
@@ -760,7 +760,7 @@
         .then((snapshot) => {
           userRole = snapshot.val();
           adjustUIBasedOnRole();
-          loadInventoryForRole();
+          loadInventoryForRole(); // 设置实时监听器
           populateStockOutOptions();
         })
         .then(() => {
@@ -860,8 +860,7 @@
 
       showLoading();
 
-      // 获取所有相关库存路径
-      const inventoryPaths = getInventoryPaths();
+      // 确定目标路径
       let targetPath = null;
 
       if (userRole === 'admin' || userRole === 'admino') {
@@ -1048,8 +1047,7 @@
 
       showLoading();
 
-      // 获取所有相关库存路径
-      const inventoryPaths = getInventoryPaths();
+      // 确定目标路径
       let targetPath = null;
 
       if (userRole === 'admin' || userRole === 'admino') {
@@ -1119,7 +1117,7 @@
       });
     });
 
-    // 加载库存列表
+    // 加载库存列表并设置实时监听
     function loadInventoryForRole() {
       const inventoryPaths = getInventoryPaths();
       inventoryTableBody.innerHTML = '';
@@ -1131,41 +1129,116 @@
         return;
       }
 
+      let allItems = {};
+
       inventoryPaths.forEach(path => {
         const inventoryRef = db.ref(path);
-        inventoryRef.on('value', (snapshot) => {
-          const data = snapshot.val();
 
-          if (data) {
-            let items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        // 监听子项被添加
+        inventoryRef.on('child_added', (snapshot) => {
+          const item = { id: snapshot.key, ...snapshot.val() };
+          allItems[item.id] = item;
+          addItemToDOM(item);
+        });
 
-            // 清空现有表格和卡片
-            inventoryTableBody.innerHTML = '';
-            inventoryCardsContainer.innerHTML = '';
+        // 监听子项被修改
+        inventoryRef.on('child_changed', (snapshot) => {
+          const updatedItem = { id: snapshot.key, ...snapshot.val() };
+          allItems[updatedItem.id] = updatedItem;
+          updateItemInDOM(updatedItem);
+        });
 
-            items.forEach(item => {
-              // 填充表格
-              const tr = createTableRow(item);
-              inventoryTableBody.appendChild(tr);
-              
-              // 填充卡片
-              const card = createCard(item);
-              card.setAttribute('data-item-id', item.id); // 设置数据属性
-              inventoryCardsContainer.appendChild(card);
-            });
-            inventoryMessage.textContent = '';
-          } else {
-            inventoryMessage.textContent = '暂无库存数据';
-          }
+        // 监听子项被移除
+        inventoryRef.on('child_removed', (snapshot) => {
+          const removedItemId = snapshot.key;
+          delete allItems[removedItemId];
+          removeItemFromDOM(removedItemId);
         });
       });
+
+      // 当所有路径都没有数据时显示消息
+      Promise.all(inventoryPaths.map(path => db.ref(path).once('value')))
+        .then((snapshots) => {
+          const hasData = snapshots.some(snapshot => snapshot.exists());
+          if (!hasData) {
+            inventoryMessage.textContent = '暂无库存数据';
+          }
+        })
+        .catch(error => {
+          console.error('加载库存数据失败:', error);
+          inventoryMessage.textContent = '加载库存数据失败: ' + error.message;
+        });
+    }
+
+    // 添加库存项到 DOM
+    function addItemToDOM(item) {
+      const tr = createTableRow(item);
+      inventoryTableBody.appendChild(tr);
+
+      const card = createCard(item);
+      card.setAttribute('data-item-id', item.id);
+      inventoryCardsContainer.appendChild(card);
+    }
+
+    // 更新库存项在 DOM 中的显示
+    function updateItemInDOM(item) {
+      // 更新表格行
+      const rows = inventoryTableBody.querySelectorAll('tr');
+      rows.forEach(row => {
+        const stockOutButton = row.querySelector('.stock-out-button');
+        if (stockOutButton && stockOutButton.getAttribute('data-item-id') === item.id) {
+          row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.category ? item.category : 'N/A'}</td>
+            <td>${item.quantity}</td>
+            <td>${item.unit}</td>
+            <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
+            <td>${item.location}</td>
+            <td class="hide-on-mobile">${item.createdTime}</td>
+            <td class="hide-on-mobile">${item.modifiedBy}</td>
+            <td><button class="stock-out-button" data-item-id="${item.id}">出货</button></td>
+          `;
+        }
+      });
+
+      // 更新卡片
+      const card = inventoryCardsContainer.querySelector(`.inventory-card[data-item-id="${item.id}"]`);
+      if (card) {
+        card.innerHTML = `
+          <p><strong>类别:</strong> ${item.category ? item.category : 'N/A'}</p>
+          <p><strong>数量:</strong> ${item.quantity}</p>
+          <p><strong>单位:</strong> ${item.unit}</p>
+          <p><strong>过期日期:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
+          <p><strong>位置:</strong> ${item.location}</p>
+          <p><strong>时间:</strong> ${item.createdTime}</p>
+          <p><strong>操作人:</strong> ${item.modifiedBy}</p>
+          <button class="stock-out-button" data-item-id="${item.id}">出货</button>
+        `;
+      }
+    }
+
+    // 从 DOM 中移除库存项
+    function removeItemFromDOM(itemId) {
+      // 移除表格行
+      const rows = inventoryTableBody.querySelectorAll('tr');
+      rows.forEach(row => {
+        const stockOutButton = row.querySelector('.stock-out-button');
+        if (stockOutButton && stockOutButton.getAttribute('data-item-id') === itemId) {
+          inventoryTableBody.removeChild(row);
+        }
+      });
+
+      // 移除卡片
+      const card = inventoryCardsContainer.querySelector(`.inventory-card[data-item-id="${itemId}"]`);
+      if (card) {
+        inventoryCardsContainer.removeChild(card);
+      }
     }
 
     // 创建表格行
     function createTableRow(item) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${item.type === 'stock-in' ? '进货' : '出货'}</td>
         <td>${item.name}</td>
         <td>${item.category ? item.category : 'N/A'}</td>
         <td>${item.quantity}</td>
@@ -1184,7 +1257,6 @@
       const card = document.createElement('div');
       card.classList.add('inventory-card');
       card.innerHTML = `
-        <h4>${item.type === 'stock-in' ? '进货' : '出货'} - ${item.name}</h4>
         <p><strong>类别:</strong> ${item.category ? item.category : 'N/A'}</p>
         <p><strong>数量:</strong> ${item.quantity}</p>
         <p><strong>单位:</strong> ${item.unit}</p>
@@ -1255,8 +1327,7 @@
 
       showLoading();
 
-      // 获取所有相关库存路径
-      const inventoryPaths = getInventoryPaths();
+      // 确定目标路径
       let targetPath = null;
 
       if (userRole === 'admin' || userRole === 'admino') {
@@ -1312,7 +1383,7 @@
       });
     });
 
-    // 事件委托：点击“出货”按钮打开出货模态框
+    // 事件委托：点击"出货"按钮打开出货模态框
     document.addEventListener('click', (e) => {
       if (e.target && e.target.classList.contains('stock-out-button')) {
         currentStockOutItemId = e.target.getAttribute('data-item-id');
@@ -1535,7 +1606,6 @@
             records.forEach(record => {
               const tr = document.createElement('tr');
               tr.innerHTML = `
-                <td>${record.type === 'stock-in' ? '进货' : '出货'}</td>
                 <td>${record.productName}</td>
                 <td>${record.category || 'N/A'}</td>
                 <td>${record.quantity}</td>
