@@ -14,12 +14,28 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pICvZonb6pj+/U6h8S86YtDj2OmyH9DlK6tm+VQf+U4km/DomZ+ZSSMwL8vqbsOYb7jz0VJo4zQ9ejO9L6LQDw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
   <style>
+       h1 {
+            text-align: center;
+        }
     /* 基本样式 */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background: linear-gradient(135deg, #71b7e6, white);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.5s ease;
+    }
+    
+    /* 当用户登录后，改变body背景 */
+    body.logged-in {
+      background: #f4f4f4;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: 0;
     }
     
     header {
@@ -29,12 +45,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
     }
     
     nav {
       background-color: #ffffff;
       padding: 10px 20px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      margin-bottom: 20px;
     }
     
     .nav-menu {
@@ -43,6 +63,7 @@
       padding: 0;
       display: flex;
       flex-wrap: wrap;
+      justify-content: center; /* 居中导航菜单 */
     }
     
     .nav-menu li {
@@ -50,18 +71,28 @@
       position: relative;
     }
     
+    .nav-menu li:last-child {
+      margin-right: 0;
+    }
+    
     .nav-menu a {
       text-decoration: none;
       color: #1976d2;
       font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s, color 0.3s;
     }
     
     .nav-menu a:hover {
-      color: #004ba0;
+      background-color: #1976d2;
+      color: white;
     }
     
     main {
       padding: 20px;
+      width: 100%;
+      max-width: 1200px;
     }
     
     section {
@@ -80,11 +111,18 @@
     
     input, select, button {
       width: 100%;
-      padding: 8px;
+      padding: 10px 40px 10px 15px;
       margin-bottom: 15px;
       border: 1px solid #cccccc;
-      border-radius: 4px;
+      border-radius: 25px;
       box-sizing: border-box;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus, select:focus {
+      border-color: #1976d2;
+      box-shadow: 0 0 5px rgba(25, 118, 210, 0.5);
     }
     
     button {
@@ -92,10 +130,21 @@
       color: white;
       border: none;
       cursor: pointer;
+      border-radius: 25px;
+      font-size: 1em;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
     }
     
     button:hover {
       background-color: #004ba0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    
+    button:active {
+      transform: scale(0.98);
     }
     
     .error-message {
@@ -135,6 +184,8 @@
       max-width: 500px;
       border-radius: 8px;
       position: relative;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
     }
     
     .close {
@@ -217,6 +268,7 @@
       padding: 12px 16px;
       text-decoration: none;
       display: block;
+      transition: background-color 0.3s;
     }
     
     .dropdown-content a:hover {
@@ -232,7 +284,107 @@
       overflow-x: auto;
     }
 
-    /* 出货模态框样式已包含在通用模态框样式中 */
+    /* 登录表单样式 */
+    #auth-container {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    #login-form, #register-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #login-form h3, #register-form h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1976d2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #login-form h3 i, #register-form h3 i {
+      margin-right: 8px;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-container input {
+      width: auto;
+      margin-right: 10px;
+    }
+
+    /* 输入框图标 */
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      transform: translateY(-50%);
+      color: #1976d2;
+      pointer-events: none;
+    }
+
+    .input-group input {
+      padding-left: 40px;
+    }
+
+    /* 链接样式 */
+    #login-form p, #register-form p {
+      text-align: center;
+    }
+
+    #login-form a, #register-form a {
+      color: #1976d2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #login-form a:hover, #register-form a:hover {
+      text-decoration: underline;
+    }
+
+    /* 主应用容器调整 */
+    #app-container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 20px;
+    }
+
+    /* 仓库管理系统标题调整 */
+    header h2 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    /* 用户信息和退出按钮对齐 */
+    #user-info {
+      display: flex;
+      align-items: center;
+    }
+
+    #welcome-message {
+      margin-right: 15px;
+      font-weight: bold;
+    }
+
+    /* 优化表单元素 */
+    input, select, button {
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
@@ -245,12 +397,18 @@
   <div id="auth-container">
     <!-- 登录表单 -->
     <div id="login-form">
-      <h3>登录</h3>
-      <label for="login-email">邮箱</label>
-      <input type="email" id="login-email" placeholder="Email" required>
+      <h1><i class="fas fa-sign-in-alt"></i> SmartProfits</h1>
+ <h3><i class="fas fa-sign-in-alt"></i> 登录</h3>
       
-      <label for="login-password">密码</label>
-      <input type="password" id="login-password" placeholder="Password" required>
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="login-email" placeholder="请输入邮箱" required>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="login-password" placeholder="请输入密码" required>
+      </div>
       
       <!-- 记住我复选框 -->
       <div class="checkbox-container">
@@ -258,24 +416,24 @@
         <label for="remember-me">记住我</label>
       </div>
       
-      <button id="login-button">登录</button>
+      <button id="login-button"><i class="fas fa-sign-in-alt"></i> 登录</button>
       <p>还没有账号？ <a href="#" id="show-register">注册</a></p>
       <p id="login-error" class="error-message"></p>
     </div>
     
     <!-- 注册表单 -->
     <div id="register-form" style="display: none;">
-      <h3>注册</h3>
+      <h3><i class="fas fa-user-plus"></i> 注册</h3>
       <label for="register-name">姓名</label>
-      <input type="text" id="register-name" placeholder="Name" required>
+      <input type="text" id="register-name" placeholder="姓名" required>
       
       <label for="register-email">邮箱</label>
-      <input type="email" id="register-email" placeholder="Email" required>
+      <input type="email" id="register-email" placeholder="邮箱" required>
       
       <label for="register-password">密码</label>
-      <input type="password" id="register-password" placeholder="Password" required>
+      <input type="password" id="register-password" placeholder="密码" required>
       
-      <button id="register-button">注册</button>
+      <button id="register-button"><i class="fas fa-user-plus"></i> 注册</button>
       <p>已有账号？ <a href="#" id="show-login">登录</a></p>
       <p id="register-error" class="error-message"></p>
     </div>
@@ -285,18 +443,18 @@
   <div id="app-container" style="display: none;">
     <header>
       <h2>仓库管理系统</h2>
-      <div id="user-info" style="display: flex; align-items: center;">
-        <span id="welcome-message" style="margin-right: 15px;"></span>
-        <button id="logout-button">退出登录</button>
+      <div id="user-info">
+        <span id="welcome-message"></span>
+        <button id="logout-button"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
       </div>
     </header>
     
     <nav>
       <ul class="nav-menu">
-        <li><a href="#" id="nav-inventory">库存列表</a></li>
+        <li><a href="#" id="nav-inventory"><i class="fas fa-boxes"></i> 库存列表</a></li>
         <!-- 进货下拉菜单 -->
         <li class="dropdown">
-          <a href="#">进货</a>
+          <a href="#"><i class="fas fa-download"></i> 进货</a>
           <div class="dropdown-content">
             <a href="#" id="nav-stock-in-office">Office</a>
             <a href="#" id="nav-stock-in-kepayan-seafood">Kepayan - Seafood</a>
@@ -304,7 +462,7 @@
           </div>
         </li>
         <!-- 新增进出货记录 -->
-        <li><a href="#" id="nav-transaction-records">进出货记录</a></li>
+        <li><a href="#" id="nav-transaction-records"><i class="fas fa-exchange-alt"></i> 进出货记录</a></li>
       </ul>
     </nav>
     
@@ -317,8 +475,7 @@
           <table id="inventory-table">
             <thead>
               <tr>
-                
-               <th>产品名称</th>
+                <th>产品名称</th>
                 <th>类别</th>
                 <th>数量</th>
                 <th>单位</th>
@@ -361,7 +518,7 @@
           <option value="office">Office</option>
         </select>
         
-        <button id="stock-in-office-button">添加进货 - Office</button>
+        <button id="stock-in-office-button"><i class="fas fa-download"></i> 添加进货 - Office</button>
         <p id="stock-in-office-error" class="error-message"></p>
       </section>
       
@@ -391,7 +548,7 @@
           <option value="kepayan">Kepayan</option>
         </select>
         
-        <button id="stock-in-kepayan-seafood-button">添加进货 - Kepayan - Seafood</button>
+        <button id="stock-in-kepayan-seafood-button"><i class="fas fa-download"></i> 添加进货 - Kepayan - Seafood</button>
         <p id="stock-in-kepayan-seafood-error" class="error-message"></p>
       </section>
       
@@ -421,7 +578,7 @@
           <option value="kepayan">Kepayan</option>
         </select>
         
-        <button id="stock-in-kepayan-packaged-button">添加进货 - Kepayan - Packaged Food</button>
+        <button id="stock-in-kepayan-packaged-button"><i class="fas fa-download"></i> 添加进货 - Kepayan - Packaged Food</button>
         <p id="stock-in-kepayan-packaged-error" class="error-message"></p>
       </section>
       
@@ -433,7 +590,6 @@
           <table id="transaction-records-table">
             <thead>
               <tr>
-                
                 <th>产品名称</th>
                 <th>类别</th>
                 <th>数量</th>
@@ -509,7 +665,7 @@
       <label for="stock-out-comment">注释 (可选)</label>
       <input type="text" id="stock-out-comment" placeholder="Comment (Optional)">
       
-      <button id="confirm-stock-out-button">确认出货</button>
+      <button id="confirm-stock-out-button"><i class="fas fa-check"></i> 确认出货</button>
       <p id="stock-out-error" class="error-message"></p>
     </div>
   </div>
@@ -736,6 +892,7 @@
         // 用户已登录，获取用户角色
         authContainer.style.display = 'none';
         appContainer.style.display = 'block';
+        document.body.classList.add('logged-in'); // 添加类以改变背景
         getUserRole(user.uid);
 
         // 显示欢迎消息
@@ -745,6 +902,7 @@
         // 用户未登录，显示登录/注册界面
         authContainer.style.display = 'block';
         appContainer.style.display = 'none';
+        document.body.classList.remove('logged-in'); // 移除类恢复背景
         inventoryTableBody.innerHTML = '';
         inventoryCardsContainer.innerHTML = '';
         inventoryMessage.textContent = '';
@@ -760,8 +918,8 @@
         .then((snapshot) => {
           userRole = snapshot.val();
           adjustUIBasedOnRole();
-          loadInventoryForRole(); // 设置实时监听器
-          populateStockOutOptions();
+          loadInventoryForRole(); // 加载库存
+          // populateStockOutOptions(); // 不需要
         })
         .then(() => {
           // 更新欢迎消息
@@ -1247,7 +1405,7 @@
         <td>${item.location}</td>
         <td class="hide-on-mobile">${item.createdTime}</td>
         <td class="hide-on-mobile">${item.modifiedBy}</td>
-        <td><button class="stock-out-button" data-item-id="${item.id}">出货</button></td>
+        <td><button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> 出货</button></td>
       `;
       return tr;
     }
@@ -1264,7 +1422,7 @@
         <p><strong>位置:</strong> ${item.location}</p>
         <p><strong>时间:</strong> ${item.createdTime}</p>
         <p><strong>操作人:</strong> ${item.modifiedBy}</p>
-        <button class="stock-out-button" data-item-id="${item.id}">出货</button>
+        <button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> 出货</button>
       `;
       return card;
     }
@@ -1393,9 +1551,10 @@
         stockOutModal.style.display = 'block';
       }
 
-      // 点击库存项卡片进行编辑
-      if (e.target && e.target.classList.contains('inventory-card')) {
-        const itemId = e.target.getAttribute('data-item-id');
+      // 点击库存项卡片进行编辑（确保点击的是卡片内容，而非按钮）
+      if (e.target && e.target.closest('.inventory-card') && !e.target.classList.contains('stock-out-button')) {
+        const card = e.target.closest('.inventory-card');
+        const itemId = card.getAttribute('data-item-id');
         const user = auth.currentUser;
         if (user) {
           // 因为库存是共享的，需遍历所有路径查找该itemId
@@ -1558,11 +1717,6 @@
       e.preventDefault();
       showSection('transaction-records');
     });
-
-    // 填充出货页面的产品选项（已不再需要，删除相关函数）
-    function populateStockOutOptions() {
-      // 此函数已不再需要，可以删除或保留为空
-    }
 
     // 辅助函数：填充<select>选项（如果需要，可保留）
     function populateSelectOptions(selectElement, data, category, role, locationFilter) {
