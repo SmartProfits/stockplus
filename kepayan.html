@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>仓库管理系统</title>
+  <title>Warehouse Management System</title>
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -17,7 +17,7 @@
        h1 {
             text-align: center;
         }
-    /* 基本样式 */
+    /* Basic Styles */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
@@ -30,7 +30,7 @@
       transition: background 0.5s ease;
     }
     
-    /* 当用户登录后，改变body背景 */
+    /* Change body background when user is logged in */
     body.logged-in {
       background: #f4f4f4;
       justify-content: flex-start;
@@ -63,7 +63,7 @@
       padding: 0;
       display: flex;
       flex-wrap: wrap;
-      justify-content: center; /* 居中导航菜单 */
+      justify-content: center; /* Center navigation menu */
     }
     
     .nav-menu li {
@@ -152,7 +152,7 @@
       font-size: 0.9em;
     }
     
-    /* 加载指示器样式 */
+    /* Loading Indicator Styles */
     #loading-indicator {
       position: fixed;
       top: 50%;
@@ -162,7 +162,7 @@
       z-index: 1000;
     }
     
-    /* 模态框样式 */
+    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -204,7 +204,7 @@
       text-decoration: none;
     }
     
-    /* 表格样式 */
+    /* Table Styles */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -247,7 +247,7 @@
       }
     }
     
-    /* 下拉菜单样式 */
+    /* Dropdown Menu Styles */
     .dropdown {
       position: relative;
       display: inline-block;
@@ -279,12 +279,12 @@
       display: block;
     }
     
-    /* 响应式表格容器 */
+    /* Responsive Table Container */
     .table-responsive {
       overflow-x: auto;
     }
 
-    /* 登录表单样式 */
+    /* Authentication Form Styles */
     #auth-container {
       width: 100%;
       max-width: 400px;
@@ -323,7 +323,7 @@
       margin-right: 10px;
     }
 
-    /* 输入框图标 */
+    /* Input Field Icons */
     .input-group {
       position: relative;
       margin-bottom: 15px;
@@ -342,7 +342,7 @@
       padding-left: 40px;
     }
 
-    /* 链接样式 */
+    /* Link Styles */
     #login-form p, #register-form p {
       text-align: center;
     }
@@ -357,20 +357,20 @@
       text-decoration: underline;
     }
 
-    /* 主应用容器调整 */
+    /* Main App Container Adjustments */
     #app-container {
       width: 100%;
       max-width: 1200px;
       padding: 20px;
     }
 
-    /* 仓库管理系统标题调整 */
+    /* Warehouse Management System Title Adjustments */
     header h2 {
       margin: 0;
       font-size: 1.5em;
     }
 
-    /* 用户信息和退出按钮对齐 */
+    /* User Information and Logout Button Alignment */
     #user-info {
       display: flex;
       align-items: center;
@@ -381,227 +381,227 @@
       font-weight: bold;
     }
 
-    /* 优化表单元素 */
+    /* Optimize Form Elements */
     input, select, button {
       font-size: 1em;
     }
   </style>
 </head>
 <body>
-  <!-- 加载指示器 -->
+  <!-- Loading Indicator -->
   <div id="loading-indicator">
     <i class="fas fa-spinner fa-spin fa-3x"></i>
   </div>
 
-  <!-- 用户认证容器 -->
+  <!-- User Authentication Container -->
   <div id="auth-container">
-    <!-- 登录表单 -->
+    <!-- Login Form -->
     <div id="login-form">
       <h1><i class="fas fa-sign-in-alt"></i> SmartProfits</h1>
- <h3><i class="fas fa-sign-in-alt"></i> 登录</h3>
+      <h3><i class="fas fa-sign-in-alt"></i> Login</h3>
       
       <div class="input-group">
         <i class="fas fa-envelope"></i>
-        <input type="email" id="login-email" placeholder="请输入邮箱" required>
+        <input type="email" id="login-email" placeholder="Enter Email" required>
       </div>
       
       <div class="input-group">
         <i class="fas fa-lock"></i>
-        <input type="password" id="login-password" placeholder="请输入密码" required>
+        <input type="password" id="login-password" placeholder="Enter Password" required>
       </div>
       
-      <!-- 记住我复选框 -->
+      <!-- Remember Me Checkbox -->
       <div class="checkbox-container">
         <input type="checkbox" id="remember-me">
-        <label for="remember-me">记住我</label>
+        <label for="remember-me">Remember Me</label>
       </div>
       
-      <button id="login-button"><i class="fas fa-sign-in-alt"></i> 登录</button>
-      <p>还没有账号？ <a href="#" id="show-register">注册</a></p>
+      <button id="login-button"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
       <p id="login-error" class="error-message"></p>
     </div>
     
-    <!-- 注册表单 -->
+    <!-- Register Form -->
     <div id="register-form" style="display: none;">
-      <h3><i class="fas fa-user-plus"></i> 注册</h3>
-      <label for="register-name">姓名</label>
-      <input type="text" id="register-name" placeholder="姓名" required>
+      <h3><i class="fas fa-user-plus"></i> Register</h3>
+      <label for="register-name">Name</label>
+      <input type="text" id="register-name" placeholder="Name" required>
       
-      <label for="register-email">邮箱</label>
-      <input type="email" id="register-email" placeholder="邮箱" required>
+      <label for="register-email">Email</label>
+      <input type="email" id="register-email" placeholder="Email" required>
       
-      <label for="register-password">密码</label>
-      <input type="password" id="register-password" placeholder="密码" required>
+      <label for="register-password">Password</label>
+      <input type="password" id="register-password" placeholder="Password" required>
       
-      <button id="register-button"><i class="fas fa-user-plus"></i> 注册</button>
-      <p>已有账号？ <a href="#" id="show-login">登录</a></p>
+      <button id="register-button"><i class="fas fa-user-plus"></i> Register</button>
+      <p>Already have an account? <a href="#" id="show-login">Login</a></p>
       <p id="register-error" class="error-message"></p>
     </div>
   </div>
 
-  <!-- 主应用容器 -->
+  <!-- Main Application Container -->
   <div id="app-container" style="display: none;">
     <header>
-      <h2>仓库管理系统</h2>
+      <h2>Warehouse Management System</h2>
       <div id="user-info">
         <span id="welcome-message"></span>
-        <button id="logout-button"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
+        <button id="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
     </header>
     
     <nav>
       <ul class="nav-menu">
-        <li><a href="#" id="nav-inventory"><i class="fas fa-boxes"></i> 库存列表</a></li>
-        <!-- 进货下拉菜单 -->
+        <li><a href="#" id="nav-inventory"><i class="fas fa-boxes"></i> Inventory List</a></li>
+        <!-- Stock In Dropdown Menu -->
         <li class="dropdown">
-          <a href="#"><i class="fas fa-download"></i> 进货</a>
+          <a href="#"><i class="fas fa-download"></i> Stock In</a>
           <div class="dropdown-content">
             <a href="#" id="nav-stock-in-office">Office</a>
             <a href="#" id="nav-stock-in-kepayan-seafood">Kepayan - Seafood</a>
             <a href="#" id="nav-stock-in-kepayan-packaged">Kepayan - Packaged Food</a>
           </div>
         </li>
-        <!-- 新增进出货记录 -->
-        <li><a href="#" id="nav-transaction-records"><i class="fas fa-exchange-alt"></i> 进出货记录</a></li>
+        <!-- Add Stock In/Out Record -->
+        <li><a href="#" id="nav-transaction-records"><i class="fas fa-exchange-alt"></i> Transaction Records</a></li>
       </ul>
     </nav>
     
     <main>
-      <!-- 库存列表部分 -->
+      <!-- Inventory List Section -->
       <section id="inventory-list-section">
-        <h3>库存列表</h3>
-        <!-- 响应式表格 -->
+        <h3>Inventory List</h3>
+        <!-- Responsive Table -->
         <div class="table-responsive">
           <table id="inventory-table">
             <thead>
               <tr>
-                <th>产品名称</th>
-                <th>类别</th>
-                <th>数量</th>
-                <th>单位</th>
-                <th class="hide-on-mobile">过期日期</th>
-                <th>位置</th>
-                <th class="hide-on-mobile">时间</th>
-                <th class="hide-on-mobile">操作人</th>
-                <th>操作</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th class="hide-on-mobile">Expiration Date</th>
+                <th>Location</th>
+                <th class="hide-on-mobile">Time</th>
+                <th class="hide-on-mobile">Operator</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <!-- 库存项将动态填充 -->
+              <!-- Inventory items will be dynamically populated -->
             </tbody>
           </table>
         </div>
-        <!-- 移动端卡片布局 -->
+        <!-- Mobile Card Layout -->
         <div id="inventory-cards" class="cards-container" style="display: none;">
-          <!-- 库存项卡片将动态填充 -->
+          <!-- Inventory item cards will be dynamically populated -->
         </div>
         <p id="inventory-message"></p>
       </section>
       
-      <!-- 进货部分 - Office -->
+      <!-- Stock In - Office Section -->
       <section id="stock-in-office-section" style="display: none;">
-        <h3>进货 - Office</h3>
-        <label for="stock-in-office-name">产品名称</label>
+        <h3>Stock In - Office</h3>
+        <label for="stock-in-office-name">Product Name</label>
         <input type="text" id="stock-in-office-name" placeholder="Product Name" required>
         
-        <label for="stock-in-office-quantity">数量</label>
+        <label for="stock-in-office-quantity">Quantity</label>
         <input type="number" id="stock-in-office-quantity" placeholder="Quantity" required>
         
-        <label for="stock-in-office-unit">单位</label>
+        <label for="stock-in-office-unit">Unit</label>
         <input type="text" id="stock-in-office-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
         
-        <label for="stock-in-office-expired-date">过期日期 (可选)</label>
-        <input type="date" id="stock-in-office-expired-date" placeholder="Expired Date (Optional)">
+        <label for="stock-in-office-expired-date">Expiration Date (Optional)</label>
+        <input type="date" id="stock-in-office-expired-date" placeholder="Expiration Date (Optional)">
         
-        <label for="stock-in-office-location">位置</label>
+        <label for="stock-in-office-location">Location</label>
         <select id="stock-in-office-location" required>
           <option value="office">Office</option>
         </select>
         
-        <button id="stock-in-office-button"><i class="fas fa-download"></i> 添加进货 - Office</button>
+        <button id="stock-in-office-button"><i class="fas fa-download"></i> Add Stock In - Office</button>
         <p id="stock-in-office-error" class="error-message"></p>
       </section>
       
-      <!-- 进货部分 - Kepayan - Seafood -->
+      <!-- Stock In - Kepayan - Seafood Section -->
       <section id="stock-in-kepayan-seafood-section" style="display: none;">
-        <h3>进货 - Kepayan - Seafood</h3>
-        <label for="stock-in-kepayan-seafood-name">产品名称</label>
+        <h3>Stock In - Kepayan - Seafood</h3>
+        <label for="stock-in-kepayan-seafood-name">Product Name</label>
         <input type="text" id="stock-in-kepayan-seafood-name" placeholder="Product Name" required>
         
-        <label for="stock-in-kepayan-seafood-category">类别</label>
+        <label for="stock-in-kepayan-seafood-category">Category</label>
         <select id="stock-in-kepayan-seafood-category" required>
-          <option value="">选择类别</option>
+          <option value="">Select Category</option>
           <option value="Seafood">Seafood</option>
         </select>
         
-        <label for="stock-in-kepayan-seafood-quantity">数量</label>
+        <label for="stock-in-kepayan-seafood-quantity">Quantity</label>
         <input type="number" id="stock-in-kepayan-seafood-quantity" placeholder="Quantity" required>
         
-        <label for="stock-in-kepayan-seafood-unit">单位</label>
+        <label for="stock-in-kepayan-seafood-unit">Unit</label>
         <input type="text" id="stock-in-kepayan-seafood-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
         
-        <label for="stock-in-kepayan-seafood-expired-date">过期日期 (可选)</label>
-        <input type="date" id="stock-in-kepayan-seafood-expired-date" placeholder="Expired Date (Optional)">
+        <label for="stock-in-kepayan-seafood-expired-date">Expiration Date (Optional)</label>
+        <input type="date" id="stock-in-kepayan-seafood-expired-date" placeholder="Expiration Date (Optional)">
         
-        <label for="stock-in-kepayan-seafood-location">位置</label>
+        <label for="stock-in-kepayan-seafood-location">Location</label>
         <select id="stock-in-kepayan-seafood-location" required>
           <option value="kepayan">Kepayan</option>
         </select>
         
-        <button id="stock-in-kepayan-seafood-button"><i class="fas fa-download"></i> 添加进货 - Kepayan - Seafood</button>
+        <button id="stock-in-kepayan-seafood-button"><i class="fas fa-download"></i> Add Stock In - Kepayan - Seafood</button>
         <p id="stock-in-kepayan-seafood-error" class="error-message"></p>
       </section>
       
-      <!-- 进货部分 - Kepayan - Packaged Food -->
+      <!-- Stock In - Kepayan - Packaged Food Section -->
       <section id="stock-in-kepayan-packaged-section" style="display: none;">
-        <h3>进货 - Kepayan - Packaged Food</h3>
-        <label for="stock-in-kepayan-packaged-name">产品名称</label>
+        <h3>Stock In - Kepayan - Packaged Food</h3>
+        <label for="stock-in-kepayan-packaged-name">Product Name</label>
         <input type="text" id="stock-in-kepayan-packaged-name" placeholder="Product Name" required>
         
-        <label for="stock-in-kepayan-packaged-category">类别</label>
+        <label for="stock-in-kepayan-packaged-category">Category</label>
         <select id="stock-in-kepayan-packaged-category" required>
-          <option value="">选择类别</option>
+          <option value="">Select Category</option>
           <option value="Packaged Food">Packaged Food</option>
         </select>
         
-        <label for="stock-in-kepayan-packaged-quantity">数量</label>
+        <label for="stock-in-kepayan-packaged-quantity">Quantity</label>
         <input type="number" id="stock-in-kepayan-packaged-quantity" placeholder="Quantity" required>
         
-        <label for="stock-in-kepayan-packaged-unit">单位</label>
+        <label for="stock-in-kepayan-packaged-unit">Unit</label>
         <input type="text" id="stock-in-kepayan-packaged-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
         
-        <label for="stock-in-kepayan-packaged-expired-date">过期日期 (可选)</label>
-        <input type="date" id="stock-in-kepayan-packaged-expired-date" placeholder="Expired Date (Optional)">
+        <label for="stock-in-kepayan-packaged-expired-date">Expiration Date (Optional)</label>
+        <input type="date" id="stock-in-kepayan-packaged-expired-date" placeholder="Expiration Date (Optional)">
         
-        <label for="stock-in-kepayan-packaged-location">位置</label>
+        <label for="stock-in-kepayan-packaged-location">Location</label>
         <select id="stock-in-kepayan-packaged-location" required>
           <option value="kepayan">Kepayan</option>
         </select>
         
-        <button id="stock-in-kepayan-packaged-button"><i class="fas fa-download"></i> 添加进货 - Kepayan - Packaged Food</button>
+        <button id="stock-in-kepayan-packaged-button"><i class="fas fa-download"></i> Add Stock In - Kepayan - Packaged Food</button>
         <p id="stock-in-kepayan-packaged-error" class="error-message"></p>
       </section>
       
-      <!-- 进出货记录部分 -->
+      <!-- Transaction Records Section -->
       <section id="transaction-records-section" style="display: none;">
-        <h3>进出货记录</h3>
-        <!-- 响应式表格 -->
+        <h3>Transaction Records</h3>
+        <!-- Responsive Table -->
         <div class="table-responsive">
           <table id="transaction-records-table">
             <thead>
               <tr>
-                <th>产品名称</th>
-                <th>类别</th>
-                <th>数量</th>
-                <th>单位</th>
-                <th>位置</th>
-                <th>时间</th>
-                <th>操作人</th>
-                <th>注释</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Location</th>
+                <th>Time</th>
+                <th>Operator</th>
+                <th>Comment</th>
               </tr>
             </thead>
             <tbody>
-              <!-- 交易记录将动态填充 -->
+              <!-- Transaction records will be dynamically populated -->
             </tbody>
           </table>
         </div>
@@ -610,62 +610,62 @@
     </main>
   </div>
 
-  <!-- 编辑库存项模态框 -->
+  <!-- Edit Inventory Item Modal -->
   <div id="edit-modal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h3>编辑库存项</h3>
+      <h3>Edit Inventory Item</h3>
       
-      <label for="edit-item-type">类型</label>
+      <label for="edit-item-type">Type</label>
       <select id="edit-item-type" required>
-        <option value="stock-in">进货</option>
-        <option value="stock-out">出货</option>
+        <option value="stock-in">Stock In</option>
+        <option value="stock-out">Stock Out</option>
       </select>
       
-      <label for="edit-item-name">产品名称</label>
+      <label for="edit-item-name">Product Name</label>
       <input type="text" id="edit-item-name" placeholder="Product Name" required>
       
-      <label for="edit-item-category">类别</label>
+      <label for="edit-item-category">Category</label>
       <select id="edit-item-category" required>
-        <option value="">选择类别</option>
+        <option value="">Select Category</option>
         <option value="Packaged Food">Packaged Food</option>
         <option value="Seafood">Seafood</option>
       </select>
       
-      <label for="edit-item-quantity">数量</label>
+      <label for="edit-item-quantity">Quantity</label>
       <input type="number" id="edit-item-quantity" placeholder="Quantity" required>
       
-      <label for="edit-item-unit">单位</label>
+      <label for="edit-item-unit">Unit</label>
       <input type="text" id="edit-item-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
       
-      <label for="edit-item-expired-date">过期日期 (可选)</label>
-      <input type="date" id="edit-item-expired-date" placeholder="Expired Date (Optional)">
+      <label for="edit-item-expired-date">Expiration Date (Optional)</label>
+      <input type="date" id="edit-item-expired-date" placeholder="Expiration Date (Optional)">
       
-      <label for="edit-item-location">位置</label>
+      <label for="edit-item-location">Location</label>
       <select id="edit-item-location" required>
-        <option value="">选择地点</option>
+        <option value="">Select Location</option>
         <option value="office">Office</option>
         <option value="kepayan">Kepayan</option>
       </select>
       
-      <button id="save-edit-button">保存更改</button>
+      <button id="save-edit-button">Save Changes</button>
       <p id="edit-item-error" class="error-message"></p>
     </div>
   </div>
 
-  <!-- 出货模态框 -->
+  <!-- Stock Out Modal -->
   <div id="stock-out-modal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h3>出货</h3>
+      <h3>Stock Out</h3>
       
-      <label for="stock-out-quantity">出货数量</label>
+      <label for="stock-out-quantity">Quantity to Stock Out</label>
       <input type="number" id="stock-out-quantity" placeholder="Quantity" required>
       
-      <label for="stock-out-comment">注释 (可选)</label>
+      <label for="stock-out-comment">Comment (Optional)</label>
       <input type="text" id="stock-out-comment" placeholder="Comment (Optional)">
       
-      <button id="confirm-stock-out-button"><i class="fas fa-check"></i> 确认出货</button>
+      <button id="confirm-stock-out-button"><i class="fas fa-check"></i> Confirm Stock Out</button>
       <p id="stock-out-error" class="error-message"></p>
     </div>
   </div>
@@ -776,6 +776,29 @@
     let currentEditItemId = null; // 当前编辑的库存项ID
     let currentStockOutItemId = null; // 当前出货的库存项ID // 新增
     let userRole = null; // 当前用户角色
+
+    /**
+     * Formats an ISO 8601 date string to "dd-mm-yyyy (hh.mmam/pm)"
+     * @param {string} isoString - The ISO 8601 date string.
+     * @returns {string} - The formatted date string.
+     */
+    function formatDateTime(isoString) {
+        const date = new Date(isoString);
+        if (isNaN(date)) return 'Invalid Date';
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+
+        let hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        const formattedTime = `${String(hours).padStart(2, '0')}.${minutes}${ampm}`;
+
+        return `${day}-${month}-${year} (${formattedTime})`;
+    }
 
     // 获取库存路径，根据用户角色动态设置
     function getInventoryPaths() {
@@ -1046,8 +1069,8 @@
         quantity: Number(quantity),
         unit,
         location,
-        createdTime: new Date().toLocaleString(),
-        modifiedTime: new Date().toLocaleString(),
+        createdTime: new Date().toISOString(), // 修改为 ISO 8601 格式
+        modifiedTime: new Date().toISOString(), // 修改为 ISO 8601 格式
         modifiedBy: user.displayName || '未知'
       };
 
@@ -1068,7 +1091,7 @@
             quantity: Number(quantity),
             unit: unit,
             location: location,
-            time: new Date().toLocaleString(),
+            time: new Date().toISOString(), // 修改为 ISO 8601 格式
             user: user.displayName || '未知',
             comment: '无' // 默认无注释
           };
@@ -1136,8 +1159,8 @@
         quantity: Number(quantity),
         unit,
         location,
-        createdTime: new Date().toLocaleString(),
-        modifiedTime: new Date().toLocaleString(),
+        createdTime: new Date().toISOString(), // 修改为 ISO 8601 格式
+        modifiedTime: new Date().toISOString(), // 修改为 ISO 8601 格式
         modifiedBy: user.displayName || '未知'
       };
 
@@ -1157,7 +1180,7 @@
             quantity: Number(quantity),
             unit: unit,
             location: location,
-            time: new Date().toLocaleString(),
+            time: new Date().toISOString(), // 修改为 ISO 8601 格式
             user: user.displayName || '未知',
             comment: '无' // 默认无注释
           };
@@ -1234,8 +1257,8 @@
         quantity: Number(quantity),
         unit,
         location,
-        createdTime: new Date().toLocaleString(),
-        modifiedTime: new Date().toLocaleString(),
+        createdTime: new Date().toISOString(), // 修改为 ISO 8601 格式
+        modifiedTime: new Date().toISOString(), // 修改为 ISO 8601 格式
         modifiedBy: user.displayName || '未知'
       };
 
@@ -1256,7 +1279,7 @@
             quantity: Number(quantity),
             unit: unit,
             location: location,
-            time: new Date().toLocaleString(),
+            time: new Date().toISOString(), // 修改为 ISO 8601 格式
             user: user.displayName || '未知',
             comment: '无' // 默认无注释
           };
@@ -1352,7 +1375,7 @@
             <td>${item.unit}</td>
             <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
             <td>${item.location}</td>
-            <td class="hide-on-mobile">${item.createdTime}</td>
+            <td class="hide-on-mobile">${formatDateTime(item.createdTime)}</td>
             <td class="hide-on-mobile">${item.modifiedBy}</td>
             <td><button class="stock-out-button" data-item-id="${item.id}">出货</button></td>
           `;
@@ -1368,7 +1391,7 @@
           <p><strong>单位:</strong> ${item.unit}</p>
           <p><strong>过期日期:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
           <p><strong>位置:</strong> ${item.location}</p>
-          <p><strong>时间:</strong> ${item.createdTime}</p>
+          <p><strong>时间:</strong> ${formatDateTime(item.createdTime)}</p>
           <p><strong>操作人:</strong> ${item.modifiedBy}</p>
           <button class="stock-out-button" data-item-id="${item.id}">出货</button>
         `;
@@ -1403,7 +1426,7 @@
         <td>${item.unit}</td>
         <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
         <td>${item.location}</td>
-        <td class="hide-on-mobile">${item.createdTime}</td>
+        <td class="hide-on-mobile">${formatDateTime(item.createdTime)}</td>
         <td class="hide-on-mobile">${item.modifiedBy}</td>
         <td><button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> 出货</button></td>
       `;
@@ -1420,7 +1443,7 @@
         <p><strong>单位:</strong> ${item.unit}</p>
         <p><strong>过期日期:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
         <p><strong>位置:</strong> ${item.location}</p>
-        <p><strong>时间:</strong> ${item.createdTime}</p>
+        <p><strong>时间:</strong> ${formatDateTime(item.createdTime)}</p>
         <p><strong>操作人:</strong> ${item.modifiedBy}</p>
         <button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> 出货</button>
       `;
@@ -1512,7 +1535,7 @@
         quantity: Number(quantity),
         unit,
         location,
-        modifiedTime: new Date().toLocaleString(),
+        modifiedTime: new Date().toISOString(), // 修改为 ISO 8601 格式
         modifiedBy: user.displayName || '未知'
       };
 
@@ -1614,7 +1637,7 @@
             // 更新库存数量
             itemRef.update({
               quantity: newQuantity,
-              modifiedTime: new Date().toLocaleString(),
+              modifiedTime: new Date().toISOString(), // 修改为 ISO 8601 格式
               modifiedBy: user.displayName || '未知'
             }, (error) => {
               if (error) {
@@ -1629,7 +1652,7 @@
                   quantity: quantityNumber,
                   unit: item.unit || 'N/A',
                   location: item.location,
-                  time: new Date().toLocaleString(),
+                  time: new Date().toISOString(), // 修改为 ISO 8601 格式
                   user: user.displayName || '未知',
                   comment: comment || '无'
                 };
@@ -1745,7 +1768,7 @@
       }
     }
 
-    // 显示进出货记录
+    // 加载进出货记录
     function loadTransactionRecords() {
       showLoading();
       db.ref('transactions').orderByChild('time').once('value')
@@ -1765,7 +1788,7 @@
                 <td>${record.quantity}</td>
                 <td>${record.unit}</td>
                 <td>${record.location}</td>
-                <td>${record.time}</td>
+                <td>${formatDateTime(record.time)}</td>
                 <td>${record.user}</td>
                 <td>${record.comment || '无'}</td>
               `;
@@ -1821,6 +1844,7 @@
         alert('您没有权限进行此操作');
       }
     }
-  </script>
+</script>
+
 </body>
 </html>
