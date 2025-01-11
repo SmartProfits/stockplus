@@ -180,6 +180,7 @@
     
     /* Responsive Tables */
     .table-responsive {
+      display: block !important;
       overflow-x: auto;
     }
     
@@ -208,41 +209,7 @@
     
     /* Hide on Mobile */
     .hide-on-mobile {
-      display: table-cell;
-    }
-    
-    @media (max-width: 600px) {
-      /* Hide unnecessary table columns on mobile */
-      th.hide-on-mobile, td.hide-on-mobile {
-        display: none;
-      }
-      
-      /* Hide table and show cards */
-      .table-responsive {
-        display: none;
-      }
-      
-      .cards-container {
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .inventory-card, .transaction-card {
-        border: 1px solid #dddddd;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 8px;
-        background-color: #ffffff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-      
-      /* Adjust button sizes */
-      button {
-        padding: 12px 20px;
-        font-size: 1em;
-      }
-      
-      /* Only display necessary content in cards */
+      display: table-cell !important;
     }
     
     @media (max-width: 480px) {
@@ -375,6 +342,26 @@
       border-color: red !important;
       box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
     }
+    
+    /* Remember Me 部分的更新代码 */
+    .checkbox-container {
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+      accent-color: #003974;
+    }
+    
+    .checkbox-container label {
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -386,48 +373,98 @@
   <!-- Authentication Container -->
   <div id="auth-container">
     <!-- Login Form -->
-    <div id="login-form" style="max-width: 400px; margin: 100px auto; padding: 30px; background: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-      <h1 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-sign-in-alt"></i> SmartProfits</h1>
-      <h3 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-sign-in-alt"></i> Login</h3>
-      
-      <div class="input-group">
-        <i class="fas fa-envelope"></i>
-        <input type="email" id="login-email" placeholder="Enter Email" required>
+    <div id="login-form" style="max-width: 400px; margin: 50px auto; padding: 40px; background: rgba(255, 255, 255, 0.95); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+      <!-- Logo and Title -->
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #003974; font-size: 2.5em; margin-bottom: 10px;">
+          <i class="fas fa-box-open" style="color: #003974;"></i> SmartProfits
+        </h1>
+        <p style="color: #666; font-size: 1.1em;">Stock Management System</p>
       </div>
-      
-      <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" id="login-password" placeholder="Enter Password" required>
-        <i class="fas fa-eye toggle-password" id="toggle-password"></i>
+
+      <!-- Login Form -->
+      <div class="input-group" style="margin-bottom: 25px;">
+        <i class="fas fa-envelope" style="color: #003974;"></i>
+        <input type="email" id="login-email" placeholder="Enter Email" style="background: #f8f9fa; border: 2px solid #e9ecef;" required>
       </div>
-      
-      <!-- Remember Me Checkbox -->
-      <div class="checkbox-container">
-        <input type="checkbox" id="remember-me">
-        <label for="remember-me">Remember Me</label>
+
+      <div class="input-group" style="margin-bottom: 25px;">
+        <i class="fas fa-lock" style="color: #003974;"></i>
+        <input type="password" id="login-password" placeholder="Enter Password" style="background: #f8f9fa; border: 2px solid #e9ecef;" required>
+        <i class="fas fa-eye toggle-password" id="toggle-password" style="color: #003974; cursor: pointer;"></i>
       </div>
-      
-      <button id="login-button"><i class="fas fa-sign-in-alt"></i> Login</button>
-      <p style="text-align: center;">Don't have an account? <a href="#" id="show-register">Register</a></p>
-      <p style="text-align: center;"><a href="#" id="forgot-password">Forgot Password?</a></p> <!-- Forgot Password Link -->
-      <p id="login-error" class="error-message" style="text-align: center;"></p>
+
+      <!-- Remember Me -->
+      <div class="checkbox-container" style="margin-bottom: 25px; display: flex; align-items: center;">
+        <div style="display: flex; align-items: center;">
+          <input type="checkbox" id="remember-me" style="margin: 0; width: auto; height: auto;">
+          <label for="remember-me" style="color: #666; margin-left: 8px;">Remember Me</label>
+        </div>
+        <div style="margin-left: auto;">
+          <a href="#" id="forgot-password" style="color: #003974; text-decoration: none; font-weight: 500;">Forgot Password?</a>
+        </div>
+      </div>
+
+      <!-- Login Button -->
+      <button id="login-button" style="background: linear-gradient(135deg, #003974, #002a63); margin-bottom: 20px; height: 50px; font-size: 1.1em; letter-spacing: 1px;">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+
+      <!-- Links -->
+      <div style="text-align: center; margin-top: 20px;">
+        <p style="color: #666;">
+          Don't have an account? 
+          <a href="#" id="show-register" style="color: #003974; text-decoration: none; font-weight: 500;">Register</a>
+        </p>
+      </div>
+
+      <!-- Error Message -->
+      <p id="login-error" class="error-message" style="text-align: center; color: #dc3545; margin-top: 15px;"></p>
     </div>
     
     <!-- Register Form -->
-    <div id="register-form" style="display: none; max-width: 400px; margin: 100px auto; padding: 30px; background: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-      <h3 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-user-plus"></i> Register</h3>
-      <label for="register-name">Name</label>
-      <input type="text" id="register-name" placeholder="Name" required>
-      
-      <label for="register-email">Email</label>
-      <input type="email" id="register-email" placeholder="Email" required>
-      
-      <label for="register-password">Password</label>
-      <input type="password" id="register-password" placeholder="Password" required>
-      
-      <button id="register-button"><i class="fas fa-user-plus"></i> Register</button>
-      <p style="text-align: center;">Already have an account? <a href="#" id="show-login">Login</a></p>
-      <p id="register-error" class="error-message" style="text-align: center;"></p>
+    <div id="register-form" style="display: none; max-width: 400px; margin: 50px auto; padding: 40px; background: rgba(255, 255, 255, 0.95); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #003974; font-size: 2.5em; margin-bottom: 10px;">
+          <i class="fas fa-user-plus" style="color: #003974;"></i> Register
+        </h1>
+        <p style="color: #666; font-size: 1.1em;">Create your account</p>
+      </div>
+
+      <div class="input-group" style="margin-bottom: 25px;">
+        <i class="fas fa-user" style="color: #003974;"></i>
+        <input 
+          type="text" 
+          id="register-name" 
+          placeholder="Enter Name" 
+          maxlength="12" 
+          style="background: #f8f9fa; border: 2px solid #e9ecef;" 
+          required
+        >
+      </div>
+
+      <div class="input-group" style="margin-bottom: 25px;">
+        <i class="fas fa-envelope" style="color: #003974;"></i>
+        <input type="email" id="register-email" placeholder="Enter Email" style="background: #f8f9fa; border: 2px solid #e9ecef;" required>
+      </div>
+
+      <div class="input-group" style="margin-bottom: 25px;">
+        <i class="fas fa-lock" style="color: #003974;"></i>
+        <input type="password" id="register-password" placeholder="Enter Password" style="background: #f8f9fa; border: 2px solid #e9ecef;" required>
+      </div>
+
+      <button id="register-button" style="background: linear-gradient(135deg, #003974, #002a63); margin-bottom: 20px; height: 50px; font-size: 1.1em; letter-spacing: 1px;">
+        <i class="fas fa-user-plus"></i> Register
+      </button>
+
+      <div style="text-align: center;">
+        <p style="color: #666;">
+          Already have an account? 
+          <a href="#" id="show-login" style="color: #003974; text-decoration: none; font-weight: 500;">Login</a>
+        </p>
+      </div>
+
+      <p id="register-error" class="error-message" style="text-align: center; color: #dc3545; margin-top: 15px;"></p>
     </div>
   </div>
 
@@ -453,6 +490,8 @@
             <a href="#" id="nav-stock-in-kepayan-packaged">Kepayan - Packaged Food</a>
           </div>
         </li>
+        <!-- Stock Out -->
+        <li><a href="#" id="nav-stock-out"><i class="fas fa-box-open"></i> Stock Out</a></li>
         <!-- Transaction Records -->
         <li><a href="#" id="nav-transaction-records"><i class="fas fa-exchange-alt"></i> Transaction Records</a></li>
       </ul>
@@ -485,7 +524,7 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Inventory Items Will Be Dynamically Populated -->
+              <!-- Items will be dynamically populated -->
             </tbody>
           </table>
         </div>
@@ -612,6 +651,63 @@
         </div>
         <p id="transaction-records-message"></p>
       </section>
+      
+      <!-- Stock Out Section -->
+      <section id="stock-out-section" style="display: none;">
+        <h3>Stock Out</h3>
+        
+        <!-- Search and Filter -->
+        <div id="stock-out-search-container">
+          <input type="text" id="stock-out-search" placeholder="Search Products">
+          <select id="stock-out-location-filter">
+            <option value="all">All Locations</option>
+            <option value="office">Office</option>
+            <option value="kepayan">Kepayan</option>
+          </select>
+        </div>
+        
+        <!-- Table for selecting items -->
+        <div class="table-responsive">
+          <table id="stock-out-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all-items"></th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Available Quantity</th>
+                <th>Unit</th>
+                <th>Location</th>
+                <th>Stock Out Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Items will be dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Batch Stock Out Form -->
+        <div id="batch-stock-out-form">
+          <label for="stock-out-comment">Comment:</label>
+          <select id="stock-out-comment" required>
+            <option value="" disabled selected>Select Comment</option>
+            <option value="Tamoi">Tamoi</option>
+            <option value="KTSP">KTSP</option>
+            <option value="Ole-Ole(DALAM)">Ole-Ole(DALAM)</option>
+            <option value="Ole-Ole(Luar)">Ole-Ole(Luar)</option>
+            <option value="TOM">TOM</option>
+            <option value="JKL">JKL</option>
+            <option value="Wrapping">Wrapping</option>
+            <option value="Left Luggage">Left Luggage</option>
+            <option value="Wisma">Wisma</option>
+          </select>
+
+          <button id="batch-stock-out-button" disabled>
+            <i class="fas fa-box-open"></i> Process Stock Out
+          </button>
+          <p id="batch-stock-out-error" class="error-message"></p>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -620,12 +716,6 @@
     <div class="modal-content">
       <span class="close">&times;</span>
       <h3>Edit Inventory Item</h3>
-      
-      <label for="edit-item-type">Type</label>
-      <select id="edit-item-type" required>
-        <option value="stock-in">Stock In</option>
-        <option value="stock-out">Stock Out</option>
-      </select>
       
       <label for="edit-item-name">Product Name</label>
       <input type="text" id="edit-item-name" placeholder="Product Name" required>
@@ -644,7 +734,7 @@
       <input type="text" id="edit-item-unit" placeholder="Unit (e.g., pieces, boxes, kg)" required>
       
       <label for="edit-item-expired-date">Expiry Date (Optional)</label>
-      <input type="date" id="edit-item-expired-date" placeholder="Expiry Date (Optional)">
+      <input type="date" id="edit-item-expired-date">
       
       <label for="edit-item-location">Location</label>
       <select id="edit-item-location" required>
@@ -722,6 +812,13 @@
     const navStockInKepayanSeafood = document.getElementById('nav-stock-in-kepayan-seafood');
     const navStockInKepayanPackaged = document.getElementById('nav-stock-in-kepayan-packaged');
     const navTransactionRecords = document.getElementById('nav-transaction-records'); // Added
+    const navStockOut = document.getElementById('nav-stock-out');
+    const stockOutSection = document.getElementById('stock-out-section');
+    const stockOutTable = document.getElementById('stock-out-table');
+    const selectAllItems = document.getElementById('select-all-items');
+    const batchStockOutButton = document.getElementById('batch-stock-out-button');
+    const stockOutSearch = document.getElementById('stock-out-search');
+    const stockOutLocationFilter = document.getElementById('stock-out-location-filter');
 
     const inventoryListSection = document.getElementById('inventory-list-section');
     const stockInOfficeSection = document.getElementById('stock-in-office-section');
@@ -1385,8 +1482,8 @@
       // Update table row
       const rows = inventoryTableBody.querySelectorAll('tr');
       rows.forEach(row => {
-        const stockOutButton = row.querySelector('.stock-out-button');
-        if (stockOutButton && stockOutButton.getAttribute('data-item-id') === item.id) {
+        const editButton = row.querySelector('.edit-button');
+        if (editButton && editButton.getAttribute('data-item-id') === item.id) {
           row.innerHTML = `
             <td>${item.name}</td>
             <td class="hide-on-mobile">${item.category ? item.category : 'N/A'}</td>
@@ -1394,9 +1491,13 @@
             <td class="hide-on-mobile">${item.unit}</td>
             <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
             <td class="hide-on-mobile">${item.location}</td>
-            <td class="hide-on-mobile">${formatDateTime(item.modifiedTime)}</td> <!-- Updated to modifiedTime -->
+            <td class="hide-on-mobile">${formatDateTime(item.modifiedTime)}</td>
             <td class="hide-on-mobile">${item.modifiedBy}</td>
-            <td><button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> Stock Out</button></td>
+            <td>
+              <button class="edit-button" data-item-id="${item.id}">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+            </td>
           `;
         }
       });
@@ -1408,7 +1509,9 @@
           <p><strong>Product Name:</strong> ${item.name}</p>
           <p><strong>Quantity:</strong> ${item.quantity}</p>
           <p><strong>Expiry Date:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
-          <button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> Stock Out</button>
+          <button class="edit-button" data-item-id="${item.id}">
+            <i class="fas fa-edit"></i> Edit
+          </button>
         `;
       }
     }
@@ -1441,9 +1544,13 @@
         <td class="hide-on-mobile">${item.unit}</td>
         <td class="hide-on-mobile">${item.expiredDate ? item.expiredDate : 'N/A'}</td>
         <td class="hide-on-mobile">${item.location}</td>
-        <td class="hide-on-mobile">${formatDateTime(item.modifiedTime)}</td> <!-- Updated to modifiedTime -->
+        <td class="hide-on-mobile">${formatDateTime(item.modifiedTime)}</td>
         <td class="hide-on-mobile">${item.modifiedBy}</td>
-        <td><button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> Stock Out</button></td>
+        <td>
+          <button class="edit-button" data-item-id="${item.id}">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </td>
       `;
       return tr;
     }
@@ -1456,23 +1563,26 @@
         <p><strong>Product Name:</strong> ${item.name}</p>
         <p><strong>Quantity:</strong> ${item.quantity}</p>
         <p><strong>Expiry Date:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
-        <button class="stock-out-button" data-item-id="${item.id}"><i class="fas fa-box-open"></i> Stock Out</button>
+        <button class="edit-button" data-item-id="${item.id}">
+          <i class="fas fa-edit"></i> Edit
+        </button>
       `;
       return card;
     }
 
     // Open Edit Modal
     function openEditModal(itemId, type, name, category, quantity, unit, expiredDate, location) {
+      document.getElementById('edit-item-name').value = name;
+      document.getElementById('edit-item-category').value = category || '';
+      const quantityInput = document.getElementById('edit-item-quantity');
+      quantityInput.value = quantity;
+      quantityInput.setAttribute('data-original-quantity', quantity); // Store original quantity
+      document.getElementById('edit-item-unit').value = unit;
+      document.getElementById('edit-item-expired-date').value = expiredDate || '';
+      document.getElementById('edit-item-location').value = location;
+      
       currentEditItemId = itemId;
-      editItemTypeSelect.value = type;
-      editItemNameInput.value = name;
-      editItemCategorySelect.value = category || '';
-      editItemQuantityInput.value = quantity;
-      editItemUnitInput.value = unit;
-      editItemExpiredDateInput.value = expiredDate || '';
-      editItemLocationSelect.value = location;
-      editItemError.textContent = '';
-      editModal.style.display = 'block';
+      document.getElementById('edit-modal').style.display = 'block';
     }
 
     // Close Edit Modal
@@ -1496,86 +1606,88 @@
 
     // Save Edited Inventory Item
     saveEditButton.addEventListener('click', () => {
-      const type = editItemTypeSelect.value;
-      const name = editItemNameInput.value.trim();
-      const category = editItemCategorySelect.value;
-      const quantity = editItemQuantityInput.value.trim();
-      const unit = editItemUnitInput.value.trim();
-      const expiredDate = editItemExpiredDateInput.value; // Optional
-      const location = editItemLocationSelect.value;
-
-      // Permission Check
-      if (!canPerformAction('edit', location)) {
-        editItemError.textContent = 'You do not have permission to perform this action.';
-        return;
-      }
-
-      // Basic Validation
-      if (type === '' || name === '' || quantity === '' || unit === '' || location === '') {
-        editItemError.textContent = 'Please fill in all required fields.';
-        return;
-      }
-
+      const name = document.getElementById('edit-item-name').value.trim();
+      const category = document.getElementById('edit-item-category').value;
+      const quantity = document.getElementById('edit-item-quantity').value.trim();
+      const unit = document.getElementById('edit-item-unit').value.trim();
+      const expiredDate = document.getElementById('edit-item-expired-date').value;
+      const location = document.getElementById('edit-item-location').value;
       const user = auth.currentUser;
-      if (!user) {
-        editItemError.textContent = 'User not authenticated.';
+
+      // Basic validation
+      if (!name || !quantity || !unit || !location) {
+        document.getElementById('edit-item-error').textContent = 'Please fill in all required fields.';
         return;
       }
 
+      if (!user) {
+        document.getElementById('edit-item-error').textContent = 'User not authenticated.';
+        return;
+      }
+
+      // Show loading
       showLoading();
 
-      // Determine Target Path
-      let targetPath = null;
-
-      if (userRole === 'admin' || userRole === 'admino') {
-        targetPath = 'inventory';
-      } else if (userRole === 'admink') {
-        targetPath = 'inventory/kepayan';
-      } else {
-        // Regular users likely do not have permission to edit
-        targetPath = null;
+      // Get the correct inventory path based on location and category
+      let inventoryPath;
+      if (location === 'office') {
+        inventoryPath = 'inventory/office';
+      } else if (location === 'kepayan') {
+        if (category === 'Seafood') {
+          inventoryPath = 'inventory/kepayan/seafood';
+        } else if (category === 'Packaged Food') {
+          inventoryPath = 'inventory/kepayan/packagedFood';
+        }
       }
 
-      if (!targetPath) {
-        editItemError.textContent = 'You do not have permission to perform this action.';
+      if (!inventoryPath) {
+        document.getElementById('edit-item-error').textContent = 'Invalid location or category combination.';
         hideLoading();
         return;
       }
 
-      const itemRef = db.ref(`${targetPath}/${currentEditItemId}`);
-      
-      // Prepare Updated Data Object
-      const updatedData = {
-        type,
+      // Update item in database using the correct path
+      const itemRef = db.ref(`${inventoryPath}/${currentEditItemId}`);
+      itemRef.update({
         name,
+        category,
         quantity: Number(quantity),
         unit,
+        expiredDate: expiredDate || null,
         location,
-        modifiedTime: new Date().toISOString(), // ISO 8601 format
+        modifiedTime: new Date().toISOString(),
         modifiedBy: user.displayName || 'Unknown'
-      };
-
-      // If category exists (for Kepayan)
-      if (category) {
-        updatedData.category = category;
-      } else {
-        updatedData.category = 'N/A'; // Or other default value
-      }
-
-      // If expiry date is provided, add to data object
-      if (expiredDate) {
-        updatedData.expiredDate = expiredDate;
-      } else {
-        updatedData.expiredDate = 'N/A'; // Or other default value
-      }
-
-      itemRef.update(updatedData, (error) => {
-        if (error) {
-          editItemError.textContent = 'Failed to update inventory item: ' + error.message;
-        } else {
-          editItemError.textContent = '';
-          editModal.style.display = 'none';
+      })
+      .then(() => {
+        // Add transaction record for quantity change
+        const originalQuantity = parseFloat(document.getElementById('edit-item-quantity').getAttribute('data-original-quantity') || '0');
+        const newQuantity = parseFloat(quantity);
+        
+        if (originalQuantity !== newQuantity) {
+          return db.ref('transactions').push({
+            type: 'edit',
+            productName: name,
+            category: category || 'N/A',
+            quantity: newQuantity - originalQuantity, // Positive for increase, negative for decrease
+            unit: unit,
+            location: location,
+            time: new Date().toISOString(),
+            user: user.displayName || 'Unknown',
+            comment: 'Quantity edited'
+          });
         }
+      })
+      .then(() => {
+        // Hide modal and loading
+        document.getElementById('edit-modal').style.display = 'none';
+        document.getElementById('edit-item-error').textContent = '';
+        hideLoading();
+        
+        // Refresh the inventory list
+        loadInventoryList();
+      })
+      .catch((error) => {
+        document.getElementById('edit-item-error').textContent = 'Failed to update item: ' + error.message;
         hideLoading();
       });
     });
@@ -1717,7 +1829,8 @@
       stockInOfficeSection.style.display = 'none';
       stockInKepayanSeafoodSection.style.display = 'none';
       stockInKepayanPackagedSection.style.display = 'none';
-      transactionRecordsSection.style.display = 'none'; // Hide all sections
+      transactionRecordsSection.style.display = 'none';
+      stockOutSection.style.display = 'none';
 
       switch(section) {
         case 'inventory':
@@ -1736,11 +1849,16 @@
           transactionRecordsSection.style.display = 'block';
           loadTransactionRecords(); // Load transaction records
           break;
+        case 'stock-out':
+          stockOutSection.style.display = 'block';
+          loadStockOutItems(); // Load stock out items
+          break;
         default:
           inventoryListSection.style.display = 'block';
       }
 
-      console.log(`Section displayed: ${section}`); // For debugging
+      // Add this line to ensure proper responsive display
+      handleResponsiveView();
     }
 
     // Add Event Listeners to Navigation Links
@@ -1767,6 +1885,12 @@
     navTransactionRecords.addEventListener('click', (e) => {
       e.preventDefault();
       showSection('transaction-records');
+    });
+
+    navStockOut.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('stock-out');
+      loadStockOutItems();
     });
 
     // Search Functionality for Inventory List
@@ -1942,16 +2066,23 @@
 
     // Handle Responsive View for Tables and Cards
     function handleResponsiveView() {
+      const tableResponsive = document.querySelector('.table-responsive');
+      const cardsContainer = document.getElementById('inventory-cards');
+      const transactionTable = document.getElementById('transaction-records-table');
+      const transactionCards = document.getElementById('transaction-records-cards');
+
       if (window.innerWidth <= 600) {
-        document.querySelector('.table-responsive').style.display = 'none';
-        inventoryCardsContainer.style.display = 'flex';
-        document.getElementById('transaction-records-table').parentElement.style.display = 'none';
-        document.getElementById('transaction-records-cards').style.display = 'flex';
+        // Mobile view
+        if (tableResponsive) tableResponsive.style.display = 'none';
+        if (cardsContainer) cardsContainer.style.display = 'flex';
+        if (transactionTable) transactionTable.parentElement.style.display = 'none';
+        if (transactionCards) transactionCards.style.display = 'flex';
       } else {
-        document.querySelector('.table-responsive').style.display = 'block';
-        inventoryCardsContainer.style.display = 'none';
-        document.getElementById('transaction-records-table').parentElement.style.display = 'block';
-        document.getElementById('transaction-records-cards').style.display = 'none';
+        // Desktop view
+        if (tableResponsive) tableResponsive.style.display = 'block';
+        if (cardsContainer) cardsContainer.style.display = 'none';
+        if (transactionTable) transactionTable.parentElement.style.display = 'block';
+        if (transactionCards) transactionCards.style.display = 'none';
       }
     }
 
@@ -1998,6 +2129,192 @@
           hideLoading();
         });
     });
+
+    // Load items for stock out
+    function loadStockOutItems() {
+      const tbody = stockOutTable.querySelector('tbody');
+      tbody.innerHTML = '';
+      
+      const inventoryPaths = getInventoryPaths();
+      inventoryPaths.forEach(path => {
+        const inventoryRef = db.ref(path);
+        inventoryRef.once('value', (snapshot) => {
+          snapshot.forEach((childSnapshot) => {
+            const item = childSnapshot.val();
+            if (item.quantity > 0) {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td><input type="checkbox" class="item-checkbox" data-id="${childSnapshot.key}" data-path="${path}"></td>
+                <td>${item.name}</td>
+                <td>${item.category || 'N/A'}</td>
+                <td>${item.quantity}</td>
+                <td>${item.unit}</td>
+                <td>${item.location}</td>
+                <td><input type="number" class="stock-out-quantity" min="1" max="${item.quantity}" disabled></td>
+              `;
+              tbody.appendChild(tr);
+            }
+          });
+        });
+      });
+    }
+
+    // Handle select all checkbox
+    selectAllItems.addEventListener('change', (e) => {
+      const checkboxes = document.querySelectorAll('.item-checkbox');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = e.target.checked;
+        const quantityInput = checkbox.closest('tr').querySelector('.stock-out-quantity');
+        quantityInput.disabled = !e.target.checked;
+      });
+      updateBatchStockOutButton();
+    });
+
+    // Handle individual checkboxes
+    stockOutTable.addEventListener('change', (e) => {
+      if (e.target.classList.contains('item-checkbox')) {
+        const quantityInput = e.target.closest('tr').querySelector('.stock-out-quantity');
+        quantityInput.disabled = !e.target.checked;
+        updateBatchStockOutButton();
+      }
+    });
+
+    // Update batch stock out button state
+    function updateBatchStockOutButton() {
+      const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+      batchStockOutButton.disabled = checkedItems.length === 0;
+    }
+
+    // Handle batch stock out
+    batchStockOutButton.addEventListener('click', async () => {
+      const comment = document.getElementById('stock-out-comment').value;
+      if (!comment) {
+        alert('Please select a comment for the stock out operation.');
+        return;
+      }
+
+      const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+      const stockOutPromises = [];
+      const user = auth.currentUser;
+
+      checkedItems.forEach(checkbox => {
+        const tr = checkbox.closest('tr');
+        const quantityInput = tr.querySelector('.stock-out-quantity');
+        const quantity = parseInt(quantityInput.value);
+        const itemId = checkbox.getAttribute('data-id');
+        const path = checkbox.getAttribute('data-path');
+
+        if (quantity > 0) {
+          const itemRef = db.ref(`${path}/${itemId}`);
+          stockOutPromises.push(
+            itemRef.once('value').then(snapshot => {
+              const item = snapshot.val();
+              if (item.quantity >= quantity) {
+                return itemRef.update({
+                  quantity: item.quantity - quantity,
+                  modifiedTime: new Date().toISOString(),
+                  modifiedBy: user.displayName || 'Unknown'
+                }).then(() => {
+                  // Add transaction record
+                  return db.ref('transactions').push({
+                    type: 'stock-out',
+                    productName: item.name,
+                    category: item.category || 'N/A',
+                    quantity: quantity,
+                    unit: item.unit,
+                    location: item.location,
+                    time: new Date().toISOString(),
+                    user: user.displayName || 'Unknown',
+                    comment: comment
+                  });
+                });
+              } else {
+                throw new Error(`Insufficient quantity for ${item.name}`);
+              }
+            })
+          );
+        }
+      });
+
+      try {
+        showLoading();
+        await Promise.all(stockOutPromises);
+        alert('Batch stock out completed successfully');
+        loadStockOutItems(); // Reload the table
+      } catch (error) {
+        alert('Error processing batch stock out: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    });
+
+    // Search and filter functionality
+    stockOutSearch.addEventListener('input', filterStockOutItems);
+    stockOutLocationFilter.addEventListener('change', filterStockOutItems);
+
+    function filterStockOutItems() {
+      const searchTerm = stockOutSearch.value.toLowerCase();
+      const locationFilter = stockOutLocationFilter.value;
+      
+      const rows = stockOutTable.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const productName = row.cells[1].textContent.toLowerCase();
+        const location = row.cells[5].textContent;
+        const matchesSearch = productName.includes(searchTerm);
+        const matchesLocation = locationFilter === 'all' || location === locationFilter;
+        row.style.display = matchesSearch && matchesLocation ? '' : 'none';
+      });
+    }
+
+    // Handle edit button clicks
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.edit-button')) {
+        const button = e.target.closest('.edit-button');
+        const itemId = button.getAttribute('data-item-id');
+        const user = auth.currentUser;
+        
+        if (user) {
+          const inventoryPaths = getInventoryPaths();
+          let found = false;
+
+          inventoryPaths.forEach(path => {
+            if (found) return;
+            const itemRef = db.ref(`${path}/${itemId}`);
+            itemRef.once('value', (snapshot) => {
+              const item = snapshot.val();
+              if (item && !found) {
+                found = true;
+                // Open edit modal with item data
+                document.getElementById('edit-item-name').value = item.name;
+                document.getElementById('edit-item-category').value = item.category || '';
+                document.getElementById('edit-item-quantity').value = item.quantity;
+                document.getElementById('edit-item-unit').value = item.unit;
+                document.getElementById('edit-item-expired-date').value = item.expiredDate || '';
+                document.getElementById('edit-item-location').value = item.location;
+                
+                // Store current item ID for save operation
+                currentEditItemId = itemId;
+                
+                // Show modal
+                document.getElementById('edit-modal').style.display = 'block';
+              }
+            });
+          });
+        }
+      }
+    });
+
+    // Close modal when clicking outside or on close button
+    window.onclick = function(event) {
+      const modal = document.getElementById('edit-modal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+
+    document.querySelector('.close').onclick = function() {
+      document.getElementById('edit-modal').style.display = 'none';
+    };
   </script>
 </body>
 </html>
