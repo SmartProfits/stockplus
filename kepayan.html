@@ -542,6 +542,9 @@
         <label for="stock-in-office-name">Product Name</label>
         <input type="text" id="stock-in-office-name" placeholder="Product Name" required>
         
+        <!-- Add hidden category input -->
+        <input type="hidden" id="stock-in-office-category" value="Office">
+        
         <label for="stock-in-office-quantity">Quantity</label>
         <input type="number" id="stock-in-office-quantity" placeholder="Quantity" required>
         
@@ -624,7 +627,21 @@
       <section id="transaction-records-section" style="display: none;">
         <h3>Transaction Records</h3>
         
-        <!-- Transaction Records Responsive Table -->
+        <!-- Add Date Filter -->
+        <div style="margin-bottom: 20px;">
+          <select id="transaction-date-filter" style="width: auto; margin-right: 10px;">
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="last7days">Last 7 Days</option>
+            <option value="last30days">Last 30 Days</option>
+            <option value="all">All Records</option>
+          </select>
+          
+          <!-- Optional: Custom Date Range -->
+          <input type="date" id="transaction-custom-date" style="width: auto; display: none;">
+        </div>
+        
+        <!-- Rest of the existing transaction records table -->
         <div class="table-responsive">
           <table id="transaction-records-table">
             <thead>
@@ -1128,6 +1145,7 @@
     // Add Stock In - Office Functionality
     stockInOfficeButton.addEventListener('click', () => {
       const name = stockInOfficeNameInput.value.trim();
+      const category = document.getElementById('stock-in-office-category').value; // Get the hidden category value
       const quantity = stockInOfficeQuantityInput.value.trim();
       const unit = stockInOfficeUnitInput.value.trim();
       const expiredDate = stockInOfficeExpiredDateInput.value; // Optional
@@ -1178,6 +1196,7 @@
       const itemData = {
         type: 'stock-in',
         name,
+        category, // Add the category to the item data
         quantity: Number(quantity),
         unit,
         location,
@@ -1195,17 +1214,17 @@
         if (error) {
           stockInOfficeError.textContent = 'Failed to add stock in item: ' + error.message;
         } else {
-          // Add transaction record
+          // Update transaction record to include category
           const transactionData = {
             type: 'stock-in',
             productName: name,
-            category: 'N/A', // Can set as needed
+            category: 'Office', // Explicitly set category to 'Office'
             quantity: Number(quantity),
             unit: unit,
             location: location,
-            time: new Date().toISOString(), // ISO 8601 format
+            time: new Date().toISOString(),
             user: user.displayName || 'Unknown',
-            comment: 'None' // Default comment
+            comment: 'None'
           };
           db.ref('transactions').push(transactionData);
 
@@ -1955,16 +1974,56 @@
     // Load Transaction Records and Set Up Real-Time Listeners
     function loadTransactionRecords() {
       showLoading();
-      db.ref('transactions').orderByChild('time').once('value')
+      const dateFilter = document.getElementById('transaction-date-filter').value;
+      const customDate = document.getElementById('transaction-custom-date').value;
+      
+      // Calculate date ranges
+      const now = new Date();
+      now.setHours(23, 59, 59, 999); // End of today
+      
+      let startDate = new Date();
+      startDate.setHours(0, 0, 0, 0); // Start of today
+      
+      switch(dateFilter) {
+        case 'today':
+          // Already set
+          break;
+        case 'yesterday':
+          startDate.setDate(startDate.getDate() - 1);
+          now.setDate(now.getDate() - 1);
+          break;
+        case 'last7days':
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case 'last30days':
+          startDate.setDate(startDate.getDate() - 30);
+          break;
+        case 'custom':
+          if (customDate) {
+            startDate = new Date(customDate);
+            startDate.setHours(0, 0, 0, 0);
+            now = new Date(customDate);
+            now.setHours(23, 59, 59, 999);
+          }
+          break;
+        case 'all':
+          startDate = new Date(0); // Beginning of time
+          break;
+      }
+
+      db.ref('transactions')
+        .orderByChild('time')
+        .startAt(startDate.toISOString())
+        .endAt(now.toISOString())
+        .once('value')
         .then((snapshot) => {
           const data = snapshot.val();
-          transactionRecordsTableBody.innerHTML = ''; // Clear table
-          document.getElementById('transaction-records-cards').innerHTML = ''; // Clear cards
+          transactionRecordsTableBody.innerHTML = '';
+          document.getElementById('transaction-records-cards').innerHTML = '';
 
           if (data) {
-            // Sort records by time descending
             const records = Object.values(data).sort((a, b) => new Date(b.time) - new Date(a.time));
-
+            
             records.forEach(record => {
               // Add to table
               const tr = document.createElement('tr');
@@ -1974,22 +2033,22 @@
                 <td>${record.quantity}</td>
                 <td class="hide-on-mobile">${record.unit}</td>
                 <td class="hide-on-mobile">${record.expiredDate || 'N/A'}</td>
-                <td>${formatDateTime(record.time)}</td> <!-- Display Transaction Time -->
+                <td>${formatDateTime(record.time)}</td>
                 <td>${record.user}</td>
                 <td>${record.comment || 'None'}</td>
               `;
               transactionRecordsTableBody.appendChild(tr);
 
-              // Add to card (Mobile)
+              // Add to mobile cards
               const card = document.createElement('div');
-              card.classList.add('transaction-card'); // Changed class to differentiate
+              card.classList.add('transaction-card');
               card.innerHTML = `
                 <p><strong>Product Name:</strong> ${record.productName}</p>
                 <p><strong>Category:</strong> ${record.category || 'N/A'}</p>
                 <p><strong>Quantity:</strong> ${record.quantity}</p>
                 <p><strong>Unit:</strong> ${record.unit || 'N/A'}</p>
                 <p><strong>Expiry Date:</strong> ${record.expiredDate || 'N/A'}</p>
-                <p><strong>Transaction Time:</strong> ${formatDateTime(record.time)}</p> <!-- Added Transaction Time -->
+                <p><strong>Transaction Time:</strong> ${formatDateTime(record.time)}</p>
                 <p><strong>Modified By:</strong> ${record.user}</p>
                 <p><strong>Comment:</strong> ${record.comment || 'None'}</p>
               `;
@@ -1997,7 +2056,7 @@
             });
             transactionRecordsMessage.textContent = '';
           } else {
-            transactionRecordsMessage.textContent = 'No transaction records available.';
+            transactionRecordsMessage.textContent = 'No transaction records found for the selected period.';
           }
         })
         .catch((error) => {
@@ -2315,6 +2374,30 @@
     document.querySelector('.close').onclick = function() {
       document.getElementById('edit-modal').style.display = 'none';
     };
+
+    // Add event listener for date filter changes
+    document.getElementById('transaction-date-filter').addEventListener('change', (e) => {
+      const customDateInput = document.getElementById('transaction-custom-date');
+      if (e.target.value === 'custom') {
+        customDateInput.style.display = 'inline-block';
+      } else {
+        customDateInput.style.display = 'none';
+        loadTransactionRecords();
+      }
+    });
+
+    // Add event listener for custom date changes
+    document.getElementById('transaction-custom-date').addEventListener('change', () => {
+      loadTransactionRecords();
+    });
+
+    // Initialize with today's records when the section is shown
+    navTransactionRecords.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('transaction-records');
+      document.getElementById('transaction-date-filter').value = 'today';
+      loadTransactionRecords();
+    });
   </script>
 </body>
 </html>
