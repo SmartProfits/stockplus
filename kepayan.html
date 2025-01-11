@@ -181,7 +181,21 @@
     /* Responsive Tables */
     .table-responsive {
       display: block !important;
+      width: 100%;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    @media (max-width: 600px) {
+      .table-responsive {
+        display: block !important; /* 确保表格始终显示 */
+      }
+      
+      /* 优化表格在移动端的显示 */
+      table {
+        white-space: nowrap;
+        font-size: 14px;
+      }
     }
     
     table {
@@ -361,6 +375,31 @@
     
     .checkbox-container label {
       cursor: pointer;
+    }
+    
+    /* Remove card-related styles */
+    .cards-container {
+      display: none !important; /* 确保卡片永远不显示 */
+    }
+    
+    /* Update table styles to be responsive */
+    .table-responsive {
+      display: block !important;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    @media (max-width: 600px) {
+      .table-responsive {
+        display: block !important; /* 确保表格始终显示 */
+      }
+      
+      /* 优化表格在移动端的显示 */
+      table {
+        white-space: nowrap;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -1578,10 +1617,47 @@
     function createCard(item) {
       const card = document.createElement('div');
       card.classList.add('inventory-card');
+      card.setAttribute('data-item-id', item.id);
+      
+      // 使用更结构化的布局
       card.innerHTML = `
-        <p><strong>Product Name:</strong> ${item.name}</p>
-        <p><strong>Quantity:</strong> ${item.quantity}</p>
-        <p><strong>Expiry Date:</strong> ${item.expiredDate ? item.expiredDate : 'N/A'}</p>
+        <p class="product-name">
+          <strong>Product Name</strong>
+          <span>${item.name}</span>
+        </p>
+        
+        <p class="category">
+          <strong>Category</strong>
+          <span>${item.category || 'N/A'}</span>
+        </p>
+        
+        <p class="quantity">
+          <strong>Quantity</strong>
+          <span>${item.quantity} ${item.unit}</span>
+        </p>
+        
+        <p class="location">
+          <strong>Location</strong>
+          <span>${item.location}</span>
+        </p>
+        
+        ${item.expiredDate ? `
+        <p class="expiry">
+          <strong>Expiry Date</strong>
+          <span>${item.expiredDate}</span>
+        </p>
+        ` : ''}
+        
+        <p class="modified">
+          <strong>Last Modified</strong>
+          <span>${formatDateTime(item.modifiedTime)}</span>
+        </p>
+        
+        <p class="modified-by">
+          <strong>Modified By</strong>
+          <span>${item.modifiedBy}</span>
+        </p>
+        
         <button class="edit-button" data-item-id="${item.id}">
           <i class="fas fa-edit"></i> Edit
         </button>
@@ -2040,18 +2116,7 @@
               transactionRecordsTableBody.appendChild(tr);
 
               // Add to mobile cards
-              const card = document.createElement('div');
-              card.classList.add('transaction-card');
-              card.innerHTML = `
-                <p><strong>Product Name:</strong> ${record.productName}</p>
-                <p><strong>Category:</strong> ${record.category || 'N/A'}</p>
-                <p><strong>Quantity:</strong> ${record.quantity}</p>
-                <p><strong>Unit:</strong> ${record.unit || 'N/A'}</p>
-                <p><strong>Expiry Date:</strong> ${record.expiredDate || 'N/A'}</p>
-                <p><strong>Transaction Time:</strong> ${formatDateTime(record.time)}</p>
-                <p><strong>Modified By:</strong> ${record.user}</p>
-                <p><strong>Comment:</strong> ${record.comment || 'None'}</p>
-              `;
+              const card = createTransactionCard(record);
               document.getElementById('transaction-records-cards').appendChild(card);
             });
             transactionRecordsMessage.textContent = '';
@@ -2398,6 +2463,45 @@
       document.getElementById('transaction-date-filter').value = 'today';
       loadTransactionRecords();
     });
+
+    // 同样更新交易记录卡片的创建函数
+    function createTransactionCard(record) {
+      const card = document.createElement('div');
+      card.classList.add('transaction-card');
+      
+      card.innerHTML = `
+        <p class="product-name">
+          <strong>Product Name</strong>
+          <span>${record.productName}</span>
+        </p>
+        
+        <p class="category">
+          <strong>Category</strong>
+          <span>${record.category || 'N/A'}</span>
+        </p>
+        
+        <p class="quantity">
+          <strong>Quantity</strong>
+          <span>${record.quantity} ${record.unit}</span>
+        </p>
+        
+        <p class="transaction-time">
+          <strong>Transaction Time</strong>
+          <span>${formatDateTime(record.time)}</span>
+        </p>
+        
+        <p class="modified-by">
+          <strong>Modified By</strong>
+          <span>${record.user}</span>
+        </p>
+        
+        <p class="comment">
+          <strong>Comment</strong>
+          <span>${record.comment || 'None'}</span>
+        </p>
+      `;
+      return card;
+    }
   </script>
 </body>
 </html>
